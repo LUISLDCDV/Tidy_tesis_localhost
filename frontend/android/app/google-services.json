@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "122328704991",
+    "project_id": "tidy-1d736",
+    "storage_bucket": "tidy-1d736.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:122328704991:android:503415a487116b70bb466a",
+        "android_client_info": {
+          "package_name": "com.tidy.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTV7w41v5DUtf9gMvpFxjz-rdjTdbMQxY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

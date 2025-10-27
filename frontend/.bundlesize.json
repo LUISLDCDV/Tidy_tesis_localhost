@@ -1,0 +1,34 @@
+{
+  "files": [
+    {
+      "path": "./dist/js/index-*.js",
+      "maxSize": "250 kB",
+      "compression": "gzip"
+    },
+    {
+      "path": "./dist/js/vue-vendor-*.js",
+      "maxSize": "150 kB",
+      "compression": "gzip"
+    },
+    {
+      "path": "./dist/js/quasar-vendor-*.js",
+      "maxSize": "300 kB",
+      "compression": "gzip"
+    },
+    {
+      "path": "./dist/js/vendor-*.js",
+      "maxSize": "100 kB",
+      "compression": "gzip"
+    },
+    {
+      "path": "./dist/css/*.css",
+      "maxSize": "50 kB",
+      "compression": "gzip"
+    }
+  ],
+  "defaultCompression": "gzip",
+  "ci": {
+    "trackBranches": ["main", "master", "develop"],
+    "repoBranchBase": "master"
+  }
+}

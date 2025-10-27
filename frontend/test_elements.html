@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Elements API</title>
+</head>
+<body>
+    <h1>Test Elements API</h1>
+    <button onclick="testAPI()">Test API Call</button>
+    <div id="results"></div>
+
+    <script>
+        async function testAPI() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = 'Loading...';
+
+            try {
+                // Get token from localStorage (if user is logged in)
+                const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+
+                if (!token) {
+                    resultsDiv.innerHTML = '<p style="color: red;">No auth token found in localStorage or sessionStorage</p>';
+                    return;
+                }
+
+                console.log('Using token:', token);
+
+                const response = await fetch('http://localhost:8000/api/usuarios/elementos', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                resultsDiv.innerHTML = `
+                    <h3>Success!</h3>
+                    <p><strong>Status:</strong> ${response.status}</p>
+                    <p><strong>Elements found:</strong> ${Array.isArray(data) ? data.length : 'Not an array'}</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+                resultsDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

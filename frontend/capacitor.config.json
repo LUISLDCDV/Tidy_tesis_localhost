@@ -1,0 +1,10 @@
+{
+  "appId": "com.tidy.app",
+  "appName": "Tidy",
+  "webDir": "dist/spa",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {},
+  "plugins": {}
+}

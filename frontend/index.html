@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Tidy App</title>
+    <meta name="description" content="Aplicación de productividad personal">
+    <!-- Updated with Railway backend connection -->
+    
+    <!-- PWA -->
+    <meta name="theme-color" content="#176F46">
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon.ico">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+
+    <!-- Material Icons Font -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- MercadoPago Script -->
+    <script type="text/javascript">
+      (function() {
+        function $MPC_load() {
+          window.$MPC_loaded !== true && (function() {
+            var s = document.createElement("script");
+            s.type = "text/javascript";
+            s.async = true;
+            s.src = document.location.protocol + "//secure.mlstatic.com/mptools/render.js";
+            var x = document.getElementsByTagName('script')[0];
+            x.parentNode.insertBefore(s, x);
+            window.$MPC_loaded = true;
+          })();
+        }
+        window.$MPC_loaded !== true ? (window.attachEvent ? window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- DO NOT touch the following DIV -->
+    <div id="app"></div>
+    <!-- quasar:entry-point -->
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

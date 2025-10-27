@@ -1,0 +1,117 @@
+{
+  "name": "Tidy - Organizador Personal",
+  "short_name": "Tidy",
+  "description": "Tu organizador personal completo con alarmas, notas, calendarios y objetivos",
+  "theme_color": "#176F46",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "lang": "es",
+  "categories": ["productivity", "utilities", "business"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "96x96",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "192x192",
+      "type": "image/x-icon",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "512x512",
+      "type": "image/x-icon",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "1280x720",
+      "type": "image/x-icon",
+      "form_factor": "wide",
+      "label": "Tidy Dashboard"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "750x1334",
+      "type": "image/x-icon",
+      "form_factor": "narrow",
+      "label": "Tidy Mobile"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nueva Nota",
+      "short_name": "Nota",
+      "description": "Crear una nueva nota rápidamente",
+      "url": "/Notes?modo=crear",
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Nueva Alarma",
+      "short_name": "Alarma",
+      "description": "Crear una nueva alarma",
+      "url": "/Alarms?modo=crear",
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Nuevo Evento",
+      "short_name": "Evento",
+      "description": "Crear un nuevo evento en el calendario",
+      "url": "/Calendars?modo=crear",
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Nuevo Objetivo",
+      "short_name": "Objetivo",
+      "description": "Crear un nuevo objetivo",
+      "url": "/Objectives?modo=crear",
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 480
+  },
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+}

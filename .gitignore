@@ -1,0 +1,39 @@
+# Docker
+.env
+
+# Backend
+backend/.env
+backend/vendor/
+backend/node_modules/
+backend/storage/*.key
+backend/storage/logs/
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/bootstrap/cache/*
+
+# Frontend
+frontend/.env
+frontend/node_modules/
+frontend/dist/
+frontend/dist-spa/
+frontend/src-capacitor/www/
+frontend/.quasar/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# MySQL data
+mysql_data/

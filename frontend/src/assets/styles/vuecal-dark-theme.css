@@ -1,0 +1,291 @@
+/* VueCal Dark Theme Styles */
+/* Estos estilos aseguran que VueCal funcione correctamente en modo oscuro */
+
+/* Contenedor principal en modo oscuro */
+.body--dark .vuecal {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+/* Header del calendario */
+.body--dark .vuecal__header {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+/* Título del calendario */
+.body--dark .vuecal__title {
+  color: #f9fafb;
+}
+
+/* Flechas de navegación */
+.body--dark .vuecal__arrow {
+  color: #f9fafb;
+}
+
+.body--dark .vuecal__arrow:hover {
+  background-color: #4b5563;
+}
+
+/* Días de la semana */
+.body--dark .vuecal__weekdays-headings {
+  background-color: #374151;
+  border-color: #4b5563;
+}
+
+.body--dark .vuecal__weekday-heading {
+  color: #f9fafb;
+}
+
+/* Cuerpo del calendario */
+.body--dark .vuecal__body {
+  background-color: #1f2937;
+}
+
+/* Celdas del calendario */
+.body--dark .vuecal__cell {
+  background-color: #1f2937;
+  border-color: #374151;
+  color: #f9fafb;
+}
+
+.body--dark .vuecal__cell:hover {
+  background-color: #374151;
+}
+
+.body--dark .vuecal__cell.today {
+  background-color: #374151;
+  box-shadow: inset 0 0 0 1px #60a5fa;
+}
+
+.body--dark .vuecal__cell.selected {
+  background-color: #4b5563;
+}
+
+/* Números de fecha */
+.body--dark .vuecal__cell-date {
+  color: #f9fafb;
+}
+
+.body--dark .vuecal__cell.today .vuecal__cell-date {
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.body--dark .vuecal__cell.out-of-scope .vuecal__cell-date {
+  color: #6b7280;
+}
+
+/* Contenido de las celdas */
+.body--dark .vuecal__cell-content {
+  color: #f9fafb;
+}
+
+/* Eventos */
+.body--dark .vuecal__event {
+  background-color: rgba(59, 130, 246, 0.2);
+  border-left-color: #3b82f6;
+  color: #f9fafb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.body--dark .vuecal__event:hover {
+  background-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.body--dark .vuecal__event.vuecal__event--focus {
+  box-shadow: 0 0 0 2px #60a5fa;
+}
+
+/* Título del evento */
+.body--dark .vuecal__event-title {
+  color: #f9fafb;
+}
+
+/* Tiempo del evento */
+.body--dark .vuecal__event-time {
+  color: #d1d5db;
+}
+
+/* Columna de tiempo */
+.body--dark .vuecal__time-column {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+.body--dark .vuecal__time-cell {
+  color: #9ca3af;
+  border-color: #374151;
+}
+
+.body--dark .vuecal__time-cell:hover {
+  background-color: #374151;
+}
+
+/* All day events */
+.body--dark .vuecal__all-day {
+  background-color: #374151;
+  border-color: #4b5563;
+}
+
+.body--dark .vuecal__all-day-text {
+  color: #f9fafb;
+}
+
+/* Menú contextual */
+.body--dark .vuecal__menu {
+  background-color: #374151;
+  border-color: #4b5563;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.body--dark .vuecal__menu li {
+  color: #f9fafb;
+  border-color: #4b5563;
+}
+
+.body--dark .vuecal__menu li:hover {
+  background-color: #4b5563;
+}
+
+/* Semana actual */
+.body--dark .vuecal__cell.current {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Drag and drop */
+.body--dark .vuecal__cell.vuecal__cell--highlighted {
+  background-color: rgba(34, 197, 94, 0.2);
+}
+
+.body--dark .vuecal__event.vuecal__event--dragging {
+  opacity: 0.7;
+  z-index: 10;
+}
+
+/* Resize handles */
+.body--dark .vuecal__event-resize-handle {
+  background-color: #60a5fa;
+}
+
+/* Background lines for hours */
+.body--dark .vuecal__bg {
+  background-color: #1f2937;
+}
+
+.body--dark .vuecal__bg .vuecal__bg-line {
+  border-color: #374151;
+}
+
+/* Week view specific */
+.body--dark .vuecal--week-view .vuecal__weekdays-headings {
+  background-color: #374151;
+}
+
+.body--dark .vuecal--week-view .vuecal__weekday-heading {
+  border-color: #4b5563;
+}
+
+/* Day view specific */
+.body--dark .vuecal--day-view .vuecal__time-column {
+  border-color: #374151;
+}
+
+/* Month view specific */
+.body--dark .vuecal--month-view .vuecal__cell {
+  min-height: 80px;
+}
+
+.body--dark .vuecal--month-view .vuecal__cell.out-of-scope {
+  background-color: #111827;
+}
+
+/* Small events in month view */
+.body--dark .vuecal--month-view .vuecal__event {
+  font-size: 0.8em;
+  padding: 1px 4px;
+}
+
+/* Now indicator */
+.body--dark .vuecal__now-line {
+  border-color: #ef4444;
+  background-color: #ef4444;
+}
+
+.body--dark .vuecal__now-line::before {
+  background-color: #ef4444;
+}
+
+/* Custom scrollbar for dark theme */
+.body--dark .vuecal__scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.body--dark .vuecal__scrollbar::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.body--dark .vuecal__scrollbar::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  border-radius: 3px;
+}
+
+.body--dark .vuecal__scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Loading states */
+.body--dark .vuecal__loading {
+  background-color: rgba(31, 41, 55, 0.8);
+  color: #f9fafb;
+}
+
+/* Responsive adjustments for dark theme */
+@media (max-width: 768px) {
+  .body--dark .vuecal__event {
+    font-size: 0.85em;
+    padding: 2px 4px;
+  }
+
+  .body--dark .vuecal__cell {
+    min-height: 60px;
+  }
+
+  .body--dark .vuecal__weekday-heading {
+    font-size: 0.9em;
+    padding: 8px 4px;
+  }
+}
+
+/* Accessibility improvements for dark theme */
+.body--dark .vuecal__event:focus {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+.body--dark .vuecal__cell:focus {
+  outline: 2px solid #60a5fa;
+  outline-offset: -2px;
+}
+
+/* Print styles for dark theme */
+@media print {
+  .body--dark .vuecal {
+    background-color: white !important;
+    color: black !important;
+  }
+
+  .body--dark .vuecal__cell {
+    background-color: white !important;
+    color: black !important;
+    border-color: #ccc !important;
+  }
+
+  .body--dark .vuecal__event {
+    background-color: #f0f0f0 !important;
+    color: black !important;
+    border-color: #999 !important;
+  }
+}

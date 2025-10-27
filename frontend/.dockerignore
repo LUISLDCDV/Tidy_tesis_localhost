@@ -1,0 +1,22 @@
+node_modules
+.git
+.github
+dist
+.quasar
+tests.backup
+vendor
+docs
+*.log
+*.tar.gz
+*.md
+.env
+.env.local
+.env.example
+s.txt
+s copy.txt
+s copy 2.txt
+package-lock.json.backup
+*.backup
+composer.lock
+coverage
+.nyc_output
