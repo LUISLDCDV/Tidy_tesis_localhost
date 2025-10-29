@@ -126,7 +126,7 @@
           </div>
           <q-scroll-area
             style="height: 200px"
-            class="bg-grey-2 rounded-borders q-pa-sm"
+            class=" rounded-borders q-pa-sm"
           >
             <div
               v-for="(log, index) in logs"

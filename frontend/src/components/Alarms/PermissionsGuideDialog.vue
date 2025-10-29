@@ -74,7 +74,7 @@
           class="q-mt-md"
           icon="settings"
           label="Instrucciones detalladas"
-          header-class="bg-grey-3"
+          header-class=""
         >
           <q-card>
             <q-card-section>

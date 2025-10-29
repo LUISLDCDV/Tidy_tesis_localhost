@@ -17,7 +17,6 @@ class ElementosTableSeeder extends Seeder
         DB::table('elementos')->insert([
             
 
-            //***TODO : poner descripcion de cada elemento
             //***NOTAS 1-3
             [
                 'tipo' => 'nota',

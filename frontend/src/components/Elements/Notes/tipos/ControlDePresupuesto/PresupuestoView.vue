@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md bg-grey-1">
+  <q-page class="q-pa-md ">
     <div class="row justify-center">
       <div class="col-12 col-lg-10">
         <!-- Budget Summary -->
@@ -226,7 +226,6 @@
 
 <script>
 
-// TODO : BUG Y HOVER PARA LOS DATOS 
 export default {
   name: 'PresupuestoView',
   props: {

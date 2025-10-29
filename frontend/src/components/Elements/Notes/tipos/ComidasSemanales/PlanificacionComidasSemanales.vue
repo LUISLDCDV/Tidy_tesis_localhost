@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md bg-grey-1">
+  <q-page class="q-pa-md ">
     <!-- Weekly Grid -->
     <div class="q-mb-lg">
       <div class="row q-gutter-sm">

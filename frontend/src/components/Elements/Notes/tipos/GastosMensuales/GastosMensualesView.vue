@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md bg-grey-1">
+  <q-page class="q-pa-md ">
     <div class="row justify-center">
       <div class="col-12 col-lg-10">
         <!-- Header -->
@@ -190,7 +190,6 @@
 
 <script>
 
-// TODO: MEJORAR FORMATO MAS PROLIJO
 // TODO: Modal para ver lo pagado y lo que falta por paga
 export default {
   name: 'GastosManager',

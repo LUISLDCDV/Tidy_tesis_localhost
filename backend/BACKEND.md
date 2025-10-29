@@ -67,6 +67,7 @@ backend/
 **Propósito**: Gestión de usuarios del sistema.
 
 **Campos**:
+
 ```php
 {
   id: bigint,
@@ -84,6 +85,7 @@ backend/
 ```
 
 **Relaciones**:
+
 ```php
 // One to One
 hasOne(UsuarioCuenta::class)
@@ -96,6 +98,7 @@ hasMany(Notificacion::class)
 ```
 
 **Scopes**:
+
 ```php
 // Usuarios activos (no eliminados)
 scopeActive($query)
@@ -108,6 +111,7 @@ scopeByRole($query, $role)
 ```
 
 **Métodos personalizados**:
+
 ```php
 // Verificar si el usuario tiene un rol específico
 hasRole(string $role): bool
@@ -120,6 +124,7 @@ getStats(): array
 ```
 
 **Ejemplo de uso**:
+
 ```php
 // Crear usuario
 $user = User::create([
@@ -150,6 +155,7 @@ $stats = $user->getStats();
 **Propósito**: Información adicional de cuenta del usuario (premium, suscripción).
 
 **Campos**:
+
 ```php
 {
   id: bigint,
@@ -164,11 +170,13 @@ $stats = $user->getStats();
 ```
 
 **Relaciones**:
+
 ```php
 belongsTo(User::class)
 ```
 
 **Ejemplo de uso**:
+
 ```php
 // Actualizar a premium
 $user->usuarioCuenta->update([
@@ -189,6 +197,7 @@ $user->usuarioCuenta->update([
 **Propósito**: Sistema de niveles y experiencia del usuario.
 
 **Campos**:
+
 ```php
 {
   id: bigint,
@@ -204,11 +213,13 @@ $user->usuarioCuenta->update([
 ```
 
 **Relaciones**:
+
 ```php
 belongsTo(User::class)
 ```
 
 **Métodos personalizados**:
+
 ```php
 // Agregar experiencia
 addExperience(int $xp): void
@@ -224,6 +235,7 @@ unlockAchievement(string $achievementKey): void
 ```
 
 **Ejemplo de uso**:
+
 ```php
 // Agregar XP
 $user->usuarioNivel->addExperience(50);
@@ -246,6 +258,7 @@ if ($user->usuarioNivel->canLevelUp()) {
 **Propósito**: Modelo base polimórfico para todos los elementos (notas, alarmas, objetivos, eventos).
 
 **Campos**:
+
 ```php
 {
   id: bigint,
@@ -264,6 +277,7 @@ if ($user->usuarioNivel->canLevelUp()) {
 ```
 
 **Relaciones**:
+
 ```php
 // Polimórfica
 morphTo('elementable') // Nota, Alarma, Objetivo, Evento
@@ -273,6 +287,7 @@ belongsTo(User::class)
 ```
 
 **Scopes**:
+
 ```php
 // Por tipo
 scopeByType($query, $type)
@@ -288,6 +303,7 @@ scopeByUser($query, $userId)
 ```
 
 **Ejemplo de uso**:
+
 ```php
 // Obtener todos los elementos de tipo nota
 $notes = Elemento::byType('note')->get();
@@ -310,6 +326,7 @@ $nota = $elemento->elementable; // Instancia de Nota
 **Propósito**: Notas de diferentes tipos.
 
 **Campos**:
+
 ```php
 {
   id: bigint,
@@ -323,11 +340,13 @@ $nota = $elemento->elementable; // Instancia de Nota
 ```
 
 **Relaciones**:
+
 ```php
 morphOne(Elemento::class, 'elementable')
 ```
 
 **Tipos de Notas**:
+
 1. `note_normal` - Nota básica
 2. `note_code` - Nota con código
 3. `gastos_mensuales` - Control de gastos
@@ -346,6 +365,7 @@ morphOne(Elemento::class, 'elementable')
 16. `premium_type_1/2/3` - Notas premium
 
 **Cast**:
+
 ```php
 protected $casts = [
     'content' => 'array',
@@ -354,6 +374,7 @@ protected $casts = [
 ```
 
 **Ejemplo de uso**:
+
 ```php
 // Crear nota
 $nota = Nota::create([
@@ -386,6 +407,7 @@ $elemento = Elemento::create([
 **Propósito**: Alarmas con geolocalización y periodicidad.
 
 **Campos**:
+
 ```php
 {
   id: bigint,
@@ -403,6 +425,7 @@ $elemento = Elemento::create([
 ```
 
 **Configuración de repetición** (`repeat_config`):
+
 ```json
 {
   "type": "daily" | "weekly" | "weekdays" | "custom",
@@ -412,6 +435,7 @@ $elemento = Elemento::create([
 ```
 
 **Configuración GPS** (`gps_config`):
+
 ```json
 {
   "enabled": true,
@@ -423,11 +447,13 @@ $elemento = Elemento::create([
 ```
 
 **Relaciones**:
+
 ```php
 morphOne(Elemento::class, 'elementable')
 ```
 
 **Ejemplo de uso**:
+
 ```php
 // Crear alarma con GPS
 $alarma = Alarma::create([
@@ -457,6 +483,7 @@ $alarma = Alarma::create([
 **Propósito**: Objetivos con metas (pasos) para completar.
 
 **Campos**:
+
 ```php
 {
   id: bigint,
@@ -471,12 +498,14 @@ $alarma = Alarma::create([
 ```
 
 **Relaciones**:
+
 ```php
 morphOne(Elemento::class, 'elementable')
 hasMany(Meta::class)
 ```
 
 **Métodos personalizados**:
+
 ```php
 // Calcular progreso
 calculateProgress(): int
@@ -489,6 +518,7 @@ isCompleted(): bool
 ```
 
 **Ejemplo de uso**:
+
 ```php
 // Crear objetivo con metas
 $objetivo = Objetivo::create([
@@ -519,6 +549,7 @@ $progress = $objetivo->calculateProgress(); // 0-100
 **Propósito**: Pasos individuales de un objetivo.
 
 **Campos**:
+
 ```php
 {
   id: bigint,
@@ -533,11 +564,13 @@ $progress = $objetivo->calculateProgress(); // 0-100
 ```
 
 **Relaciones**:
+
 ```php
 belongsTo(Objetivo::class)
 ```
 
 **Ejemplo de uso**:
+
 ```php
 // Marcar meta como completada
 $meta->update([
@@ -563,6 +596,7 @@ if ($objetivo->metas()->where('completed', false)->count() === 0) {
 **Propósito**: Historial de pagos de MercadoPago.
 
 **Campos**:
+
 ```php
 {
   id: bigint,
@@ -585,11 +619,13 @@ if ($objetivo->metas()->where('completed', false)->count() === 0) {
 ```
 
 **Relaciones**:
+
 ```php
 belongsTo(User::class, 'user_id', 'id', 'usuarios')
 ```
 
 **Scopes**:
+
 ```php
 // Pagos aprobados
 scopeApproved($query)
@@ -602,6 +638,7 @@ scopeSubscriptions($query)
 ```
 
 **Accessors**:
+
 ```php
 // Monto formateado
 getFormattedAmountAttribute(): string // "ARS $1,500.00"
@@ -614,6 +651,7 @@ getPlanTypeLabelAttribute(): string // "Mensual"
 ```
 
 **Ejemplo de uso**:
+
 ```php
 // Crear registro de pago
 Payment::create([
@@ -644,6 +682,7 @@ $monthlyPayments = Payment::approved()
 **Propósito**: Gestión de autenticación (login, registro, logout).
 
 **Rutas**:
+
 ```php
 POST   /api/register      # Registro de usuario
 POST   /api/login         # Inicio de sesión
@@ -657,6 +696,7 @@ POST   /api/refresh       # Refrescar token
 #### `register(Request $request)`
 
 **Request**:
+
 ```json
 {
   "name": "Juan",
@@ -669,6 +709,7 @@ POST   /api/refresh       # Refrescar token
 ```
 
 **Response** (201):
+
 ```json
 {
   "success": true,
@@ -686,6 +727,7 @@ POST   /api/refresh       # Refrescar token
 ```
 
 **Validaciones**:
+
 - name: requerido, string, min:2
 - last_name: requerido, string, min:2
 - email: requerido, email, único
@@ -697,6 +739,7 @@ POST   /api/refresh       # Refrescar token
 #### `login(Request $request)`
 
 **Request**:
+
 ```json
 {
   "email": "juan@example.com",
@@ -705,6 +748,7 @@ POST   /api/refresh       # Refrescar token
 ```
 
 **Response** (200):
+
 ```json
 {
   "success": true,
@@ -723,6 +767,7 @@ POST   /api/refresh       # Refrescar token
 ```
 
 **Response error** (401):
+
 ```json
 {
   "success": false,
@@ -739,6 +784,7 @@ POST   /api/refresh       # Refrescar token
 **Propósito**: CRUD de elementos (notas, alarmas, objetivos).
 
 **Rutas**:
+
 ```php
 GET    /api/elementos                  # Listar elementos
 POST   /api/elementos                  # Crear elemento
@@ -754,6 +800,7 @@ POST   /api/elementos/{id}/restore     # Restaurar
 #### `index(Request $request)`
 
 **Query params**:
+
 ```
 ?type=note              # Filtrar por tipo
 &archived=false         # Filtrar archivados
@@ -762,6 +809,7 @@ POST   /api/elementos/{id}/restore     # Restaurar
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -792,6 +840,7 @@ POST   /api/elementos/{id}/restore     # Restaurar
 #### `store(Request $request)`
 
 **Request** (ejemplo nota):
+
 ```json
 {
   "title": "Mi primera nota",
@@ -808,6 +857,7 @@ POST   /api/elementos/{id}/restore     # Restaurar
 ```
 
 **Response** (201):
+
 ```json
 {
   "success": true,
@@ -831,6 +881,7 @@ POST   /api/elementos/{id}/restore     # Restaurar
 **Propósito**: Gestión de pagos y suscripciones con MercadoPago.
 
 **Rutas**:
+
 ```php
 GET    /api/mercadopago/success       # Redirect después de pago exitoso
 POST   /api/mercadopago/webhook       # Webhook de MercadoPago
@@ -842,6 +893,7 @@ GET    /api/mercadopago/subscription  # URL de suscripción
 #### `subscriptionSuccess(Request $request)`
 
 **Query params** (desde MercadoPago):
+
 ```
 ?collection_id=123456
 &status=approved
@@ -850,6 +902,7 @@ GET    /api/mercadopago/subscription  # URL de suscripción
 ```
 
 **Funcionalidades**:
+
 - Actualiza usuario a premium
 - Guarda registro de pago
 - Establece fecha de expiración
@@ -860,6 +913,7 @@ GET    /api/mercadopago/subscription  # URL de suscripción
 #### `webhook(Request $request)`
 
 **Request** (desde MercadoPago):
+
 ```json
 {
   "type": "subscription",
@@ -870,6 +924,7 @@ GET    /api/mercadopago/subscription  # URL de suscripción
 ```
 
 **Funcionalidades**:
+
 - Procesa notificaciones de MercadoPago
 - Actualiza estado de suscripción
 - Guarda historial de pagos
@@ -884,6 +939,7 @@ GET    /api/mercadopago/subscription  # URL de suscripción
 **Propósito**: Panel de administración web.
 
 **Rutas**:
+
 ```php
 GET    /admin/dashboard/users          # Gestión de usuarios
 GET    /admin/dashboard/payments       # Historial de pagos
@@ -895,6 +951,7 @@ GET    /admin/dashboard/charts         # Estadísticas
 #### `payments(Request $request)`
 
 **Query params**:
+
 ```
 ?status=approved
 &search=usuario
@@ -902,12 +959,14 @@ GET    /admin/dashboard/charts         # Estadísticas
 ```
 
 **Funcionalidades**:
+
 - Lista de pagos con paginación
 - Filtros por estado y usuario
 - Estadísticas de ingresos
 - Modal de detalles con metadata
 
 **Response** (vista Blade):
+
 - Tarjetas de estadísticas
 - Tabla de pagos
 - Filtros de búsqueda
@@ -922,12 +981,14 @@ GET    /admin/dashboard/charts         # Estadísticas
 **Configuración**: `config/sanctum.php`
 
 **Funcionamiento**:
+
 1. Usuario hace login → recibe token
 2. Token se envía en headers de requests subsiguientes
 3. Middleware `auth:sanctum` valida el token
 4. Usuario autenticado disponible en request
 
 **Ejemplo de request autenticado**:
+
 ```bash
 curl -X GET https://api.tidy.com/api/user \
   -H "Authorization: Bearer 2|eyJ0eXAiOiJKV1QiLCJh..."
@@ -942,6 +1003,7 @@ curl -X GET https://api.tidy.com/api/user \
 **Propósito**: Validar token de autenticación.
 
 **Uso**:
+
 ```php
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/elementos', [ElementoController::class, 'index']);
@@ -957,6 +1019,7 @@ Route::middleware('auth:sanctum')->group(function () {
 **Propósito**: Verificar rol de usuario.
 
 **Uso**:
+
 ```php
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index']);
@@ -990,6 +1053,7 @@ calculateProgress(int $currentXP, int $currentLevel): int
 ```
 
 **Tabla de niveles**:
+
 ```php
 protected $levelXPRequirements = [
     1 => 0,
@@ -1003,6 +1067,7 @@ protected $levelXPRequirements = [
 ```
 
 **Ejemplo de uso**:
+
 ```php
 use App\Services\NivelService;
 
@@ -1026,6 +1091,7 @@ $nextLevelXP = $nivelService->getRequiredXPForNextLevel(5); // 2000
 **Propósito**: Otorgar XP automáticamente por acciones del usuario.
 
 **Eventos observados**:
+
 ```php
 // Elementos
 Elemento::created   → +10 XP (nota)
@@ -1040,6 +1106,7 @@ Meta::completed     → +20 XP
 ```
 
 **Registro** (`app/Providers/EventServiceProvider.php`):
+
 ```php
 protected $observers = [
     Elemento::class => [GamificationObserver::class],
@@ -1048,6 +1115,7 @@ protected $observers = [
 ```
 
 **Ejemplo**:
+
 ```php
 // Al crear un objetivo, automáticamente se otorgan 15 XP
 $objetivo = Objetivo::create([...]);
@@ -1065,6 +1133,7 @@ $objetivo = Objetivo::create([...]);
 #### AuthControllerTest.php
 
 **Tests incluidos**:
+
 ```php
 test_user_can_register()
 test_user_can_login()
@@ -1074,6 +1143,7 @@ test_can_get_authenticated_user()
 ```
 
 **Ejemplo**:
+
 ```php
 public function test_user_can_register()
 {
@@ -1098,6 +1168,7 @@ public function test_user_can_register()
 #### ElementoControllerTest.php
 
 **Tests incluidos**:
+
 ```php
 test_can_list_elementos()
 test_can_create_elemento()
@@ -1116,6 +1187,7 @@ test_can_filter_elementos_by_type()
 #### NotaTest.php
 
 **Tests incluidos**:
+
 ```php
 test_content_is_cast_to_array()
 test_can_store_complex_content()
@@ -1147,6 +1219,7 @@ php artisan test tests/Feature/AuthControllerTest.php
 ### Railway
 
 **Dockerfile**:
+
 ```dockerfile
 FROM php:8.2-fpm
 
@@ -1171,32 +1244,12 @@ RUN npm install && npm run build
 RUN chown -R www-data:www-data /var/www/html/storage
 ```
 
-**Variables de entorno** (.env):
-```env
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://tidyback-production.up.railway.app
-
-DB_HOST=containers-us-west-X.railway.app
-DB_DATABASE=railway
-DB_USERNAME=postgres
-DB_PASSWORD=***
-
-REDIS_HOST=containers-us-west-X.railway.app
-REDIS_PASSWORD=***
-
-MERCADOPAGO_ACCESS_TOKEN=***
-MERCADOPAGO_PUBLIC_KEY=***
-
-SANCTUM_STATEFUL_DOMAINS=tidy-personal.web.app
-SESSION_DOMAIN=.railway.app
-```
-
 ---
 
 ### Migraciones en Producción
 
 **Ruta especial**:
+
 ```php
 // web.php
 Route::get('/run-migrations-now-please-' . md5(env('APP_KEY')), function () {
@@ -1206,6 +1259,7 @@ Route::get('/run-migrations-now-please-' . md5(env('APP_KEY')), function () {
 ```
 
 **Uso**:
+
 ```bash
 # Generar URL hash
 php artisan tinker
@@ -1222,21 +1276,22 @@ https://tidyback-production.up.railway.app/run-migrations-now-please-{hash}
 ### Nomenclatura
 
 1. **Modelos**: PascalCase singular
+
    ```php
    User, Elemento, Nota, Alarma
    ```
-
 2. **Controladores**: PascalCase + Controller
+
    ```php
    AuthController, ElementoController
    ```
-
 3. **Métodos**: camelCase
+
    ```php
    getUserStats(), calculateLevel()
    ```
-
 4. **Rutas**: kebab-case
+
    ```php
    /api/usuario-nivel
    /admin/dashboard-users
@@ -1247,6 +1302,7 @@ https://tidyback-production.up.railway.app/run-migrations-now-please-{hash}
 ### Validación
 
 **Form Requests**:
+
 ```php
 // app/Http/Requests/StoreElementoRequest.php
 class StoreElementoRequest extends FormRequest
@@ -1274,6 +1330,7 @@ public function store(StoreElementoRequest $request)
 ### Manejo de Errores
 
 **Try-catch en controladores**:
+
 ```php
 public function store(Request $request)
 {
@@ -1301,6 +1358,7 @@ public function store(Request $request)
 ### Query Optimization
 
 **Eager loading**:
+
 ```php
 // Malo (N+1 queries)
 $elementos = Elemento::all();
@@ -1320,6 +1378,7 @@ foreach ($elementos as $elemento) {
 ### Transacciones
 
 **Para operaciones múltiples**:
+
 ```php
 use Illuminate\Support\Facades\DB;
 

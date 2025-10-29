@@ -1,8 +1,8 @@
 <template>
   <q-page class="dinamic-note-wrapper">
     <!-- Header with back button -->
-    <div class="note-header">
-      <div class="header-content">
+    <div class="">
+      <div class="">
         <BackButton class="back-btn" />
         <q-btn
           v-if="modo === 'editar'"
@@ -75,7 +75,6 @@ import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import ErrorComponent from '@/components/ErrorComponent.vue';
 import { formatDateForMySQL } from '@/utils/dateFormat';
 import BackButton from '@/components/Nav/BackButton.vue';
-
 
 // Función para generar componentes de forma dinámica
 const createAsyncComponent = (loader) => defineAsyncComponent({
@@ -164,7 +163,6 @@ export default {
 
       return componentMap[this.type] || createAsyncComponent(() => import('@/components/NotFound.vue'));
     },
-
   },
 
   methods: {
@@ -230,7 +228,6 @@ export default {
     },
     
     commitNoteToStore() {
-      // TODO: Migrar a Pinia
       console.log('Saving note:', {
         elemento_id: this.id,
         tipo_nota_id: this.type,
@@ -238,13 +235,6 @@ export default {
         contenido: this.localContent,
         fecha: new Date().toISOString()
       });
-      // this.$store.commit('notes/SET_NOTA_ACTUAL', {
-      //   elemento_id: this.id,
-      //   tipo_nota_id: this.type,
-      //   nombre: this.localNombre,
-      //   contenido: this.localContent,
-      //   fecha: new Date().toISOString()
-      // });
     },
     
     async saveChanges() {
@@ -329,72 +319,32 @@ export default {
       }
     }
   }
-
-
-  // methods: {
-  //   ...mapActions('notes', ['fetchNota', 'guardarNota']),
-
-  //   initializeNewNote() {
-  //     this.$store.commit('notes/SET_NOTA_ACTUAL', {
-  //       tipo_nota_id: this.type,
-  //       nombre: 'Sin título',
-  //       contenido: '',
-  //       fecha: new Date().toISOString()
-  //     });
-  //   },
-
-  //   handleNombreUpdate(newNombre) {
-  //     this.localNombre = newNombre;
-  //     this.$store.commit('notes/UPDATE_NOMBRE', newNombre);
-  //   },
-
-  //   handleContentUpdate(newContent) {
-  //     this.localContent = newContent;
-  //     this.$store.commit('notes/UPDATE_CONTENIDO', newContent);
-  //   },
-
-  //   async saveChanges() {
-  //     try {
-  //       const Nota = {
-  //         id: this.notaActual.elemento_id || null,
-  //         tipo_nota_id: this.notaActual.tipo_nota_id,
-  //         fecha: formatDateForMySQL(new Date()),
-  //         nombre: this.localNombre,
-  //         contenido: this.localContent
-  //       };
-
-  //       await this.guardarNota(Nota);
-  //       this.$store.commit('notes/SET_NOTA_ACTUAL', Nota);
-  //       alert('Guardado exitoso');
-  //     } catch (error) {
-  //       console.error('Error al guardar:', error);
-  //       alert('Error al guardar');
-  //     }
-  //   }
-  
-    
-  // }
-
-
-
 }
 </script>
+
 <style scoped>
 /* Main wrapper */
 .dinamic-note-wrapper {
   position: relative;
   min-height: 100vh;
   background-color: #f9fafb;
+  padding-top: 0; /* Asegurar que no hay padding superior */
 }
 
-/* Header section */
+/* Header section - CORREGIDO para evitar conflicto con nav */
 .note-header {
   background-color: white;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid rgb(134, 10, 103);
   position: sticky;
-  top: 0;
+  top: 0; /* Si hay un nav fijo arriba, cambiar esto */
   z-index: 1000;
   padding: 12px 16px;
+  margin-top: 0; /* Asegurar que no hay margen superior */
+}
+
+/* Si tienes un nav fijo en la parte superior, ajusta el top */
+:deep(.q-layout__header) ~ .note-header {
+  top: 56px; /* Ajustar según la altura de tu nav */
 }
 
 .header-content {
@@ -403,6 +353,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-height: 44px; /* Altura mínima para mejor touch */
 }
 
 .back-btn {
@@ -411,16 +362,6 @@ export default {
 
 .delete-btn {
   flex-shrink: 0;
-}
-
-.save-button-header {
-  transition: all 0.2s ease;
-}
-
-.save-icon-only {
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
 }
 
 /* Container */
@@ -454,6 +395,7 @@ export default {
   font-size: 1.5rem;
   font-weight: 600;
   color: #111827;
+  width: 100%;
 }
 
 /* Content section */
@@ -499,6 +441,7 @@ export default {
 @media (max-width: 768px) {
   .note-header {
     padding: 10px 12px;
+    top: 0; /* Ajustar según tu nav móvil */
   }
   
   .dinamic-note-container {
@@ -521,11 +464,20 @@ export default {
   .loading-container {
     padding: 40px 16px;
   }
+  
+  .save-button-fab {
+    bottom: 76px;
+    right: 20px;
+  }
 }
 
 @media (max-width: 480px) {
   .note-header {
     padding: 8px 10px;
+  }
+  
+  .header-content {
+    min-height: 40px;
   }
   
   .dinamic-note-container {
@@ -546,8 +498,8 @@ export default {
   }
   
   .save-button-fab {
-    bottom: 76px;
-    right: 20px;
+    bottom: 72px;
+    right: 16px;
     width: 56px;
     height: 56px;
   }
@@ -557,41 +509,9 @@ export default {
   }
 }
 
-@media (max-width: 360px) {
-  .dinamic-note-container {
-    padding: 6px;
-  }
-  
-  .title-card-content {
-    padding: 10px;
-  }
-  
-  .save-button-fab {
-    bottom: 72px;
-    right: 16px;
-    width: 52px;
-    height: 52px;
-  }
-}
-
-/* Larger screens */
-@media (min-width: 1024px) {
-  .dinamic-note-container {
-    padding: 24px;
-    gap: 24px;
-  }
-  
-  .title-card-content {
-    padding: 24px;
-  }
-  
-  .note-title-input {
-    font-size: 1.75rem;
-  }
-  
-  .note-content-section {
-    min-height: 600px;
-  }
+/* SOLUCIÓN ALTERNATIVA: Si el problema persiste, usar margin-top en el container */
+.dinamic-note-container.has-sticky-header {
+  margin-top: 60px; /* Ajustar según la altura del header */
 }
 
 /* Dark mode support */
@@ -619,7 +539,6 @@ export default {
 
 /* Touch improvements */
 @media (hover: none) and (pointer: coarse) {
-  .save-button-header,
   .save-button-fab {
     min-width: 44px;
     min-height: 44px;
@@ -628,10 +547,6 @@ export default {
   
   .save-button-fab:active {
     transform: scale(0.95);
-  }
-  
-  .save-button-header:active {
-    transform: scale(0.98);
   }
 }
 
@@ -650,5 +565,17 @@ export default {
     box-shadow: none;
     border: 1px solid #e5e7eb;
   }
+}
+
+/* SOLUCIÓN DE EMERGENCIA: Si nada funciona, reset completo */
+.note-header.reset-position {
+  position: relative !important;
+  top: auto !important;
+  z-index: auto !important;
+}
+
+/* Asegurar que el contenido no se esconde detrás del header */
+.dinamic-note-container.offset-for-header {
+  padding-top: 70px; /* Espacio para el header */
 }
 </style>

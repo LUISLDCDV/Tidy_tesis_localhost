@@ -27,5 +27,3 @@ export function confirmNo() {
     resolverFunction = null;
   }
 }
-
-// TODO: IMPLEMENTAR EL MODAL EN TODOS LADOS COMO EN NOTAS CLAVES

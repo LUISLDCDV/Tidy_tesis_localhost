@@ -223,7 +223,7 @@ export default {
           password_confirmation: this.password_confirmation,
         });
         
-        const response = await axios.post(import.meta.env.VITE_API_URL + '/api/register', {
+        const response = await axios.post(import.meta.env.VITE_API_URL + '/register', {
           name: this.name,
           last_name: this.last_name,
           phone: this.phone,

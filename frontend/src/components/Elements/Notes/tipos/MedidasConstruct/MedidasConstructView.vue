@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md bg-grey-1">
+  <q-page class="q-pa-md ">
     <div class="row justify-center">
       <div class="col-12">
         <!-- Formulario de nuevo elemento -->

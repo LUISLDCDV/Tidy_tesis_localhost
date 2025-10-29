@@ -29,7 +29,7 @@
           v-for="person in people" 
           :key="person"
           class="row items-center justify-between q-pa-sm"
-          :class="selectedPerson === person ? 'bg-positive-1' : 'bg-grey-2'"
+          :class="selectedPerson === person ? 'bg-positive-1' : ''"
           style="border-radius: 8px;"
         >
           <div class="col row items-center no-wrap">

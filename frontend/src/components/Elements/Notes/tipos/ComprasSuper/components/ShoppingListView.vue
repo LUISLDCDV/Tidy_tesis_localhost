@@ -1,43 +1,56 @@
 <template>
-  <q-page class="q-pa-md bg-grey-1">
+  <q-page class="q-pa-sm ">
     <!-- Main Content -->
     <div class="row justify-center">
-      <div class="col-12 col-md-8 col-lg-6">
-        <q-card flat bordered>
-          <q-card-section>
-            <div class="text-h4 text-weight-bold q-mb-lg">{{ $t('notes.shoppingList.title') }}</div>
+      <div class="col-12">
+        <q-card flat bordered class="mobile-card">
+          <q-card-section class="q-pa-md">
+            <!-- Header -->
+            <div class="text-h5 text-weight-bold q-mb-md">{{ $t('notes.shoppingList.title') }}</div>
 
-            <!-- Lista de items -->
+            <!-- Lista de items - Versión Mobile -->
             <div class="q-mb-lg">
-              <div class="text-h6 text-weight-medium q-mb-md">{{ $t('notes.shoppingList.items') }}</div>
-              <q-list separator>
+              <div class="text-h6 text-weight-medium q-mb-sm">{{ $t('notes.shoppingList.items') }}</div>
+              
+              <!-- Empty State -->
+              <div v-if="items.length === 0" class="text-center q-pa-xl text-grey-6">
+                <q-icon name="shopping_cart" size="48px" class="q-mb-sm" />
+                <div>{{ $t('notes.shoppingList.emptyList') }}</div>
+              </div>
+
+              <!-- Lista con diseño mobile -->
+              <q-list separator class="rounded-borders" v-else>
                 <q-item 
                   v-for="item in items" 
                   :key="item.id"
-                  class="q-pa-md"
+                  class="q-py-sm q-px-none list-item-mobile"
+                  :class="{ 'bg-green-1': item.checked }"
                 >
-                  <q-item-section side>
+                  <!-- Checkbox -->
+                  <q-item-section side class="q-pr-sm">
                     <q-checkbox 
                       v-model="item.checked"
                       color="positive"
+                      size="sm"
                     />
                   </q-item-section>
                   
-                  <q-item-section>
+                  <!-- Contenido principal -->
+                  <q-item-section class="q-pr-sm">
                     <q-item-label 
-                      class="text-body1"
+                      class="text-body2 item-name"
                       :class="{ 'text-strike text-grey': item.checked }"
                     >
                       {{ item.name }}
                     </q-item-label>
+                    <q-item-label caption class="text-positive text-weight-medium">
+                      {{ item.price }}
+                    </q-item-label>
                   </q-item-section>
                   
-                  <q-item-section side>
-                    <div class="text-positive text-weight-medium q-mr-md">{{ item.price }}</div>
-                  </q-item-section>
-                  
-                  <q-item-section side>
-                    <div class="q-gutter-xs">
+                  <!-- Acciones - Solo mostrar en mobile cuando sea necesario -->
+                  <q-item-section side class="min-width-auto">
+                    <q-btn-group flat rounded>
                       <q-btn 
                         @click="editItem(item)" 
                         icon="edit"
@@ -60,56 +73,102 @@
                       >
                         <q-tooltip>{{ $t('common.delete') }}</q-tooltip>
                       </q-btn>
-                    </div>
+                    </q-btn-group>
                   </q-item-section>
                 </q-item>
               </q-list>
+
+              <!-- Resumen móvil -->
+              <div v-if="items.length > 0" class="row justify-between items-center q-mt-md q-px-sm">
+                <div class="text-caption text-grey-6">
+                  {{ checkedItemsCount }} de {{ items.length }} completados
+                </div>
+                <q-btn 
+                  v-if="checkedItemsCount > 0"
+                  @click="clearCompleted"
+                  label="Limpiar"
+                  color="grey"
+                  flat
+                  dense
+                  size="sm"
+                />
+              </div>
             </div>
 
-            <!-- Formulario para agregar/editar items -->
-            <q-separator class="q-my-lg" />
+            <!-- Separador -->
+            <q-separator class="q-my-md" />
             
-            <div>
-              <div class="text-h6 text-weight-medium q-mb-md">
+            <!-- Formulario mobile -->
+            <div class="form-mobile">
+              <div class="text-h6 text-weight-medium q-mb-sm">
                 {{ isEditing ? $t('notes.shoppingList.editItem') : $t('notes.shoppingList.addNewItem') }}
               </div>
               
-              <q-form @submit.prevent="addItem" class="q-gutter-md">
-                <div class="row q-gutter-md">
-                  <div class="col">
-                    <q-input
-                      v-model="newItem.name"
-                      :label="$t('notes.shoppingList.itemNamePlaceholder')"
-                      outlined
-                      dense
-                      required
-                    />
-                  </div>
+              <q-form @submit.prevent="addItem" class="q-gutter-y-md">
+                <!-- Campos en columna para mobile -->
+                <q-input
+                  v-model="newItem.name"
+                  :label="$t('notes.shoppingList.itemNamePlaceholder')"
+                  outlined
+                  dense
+                  required
+                  class="full-width"
+                />
+                
+                <div class="row items-center q-gutter-sm">
+                  <q-input
+                    v-model="newItem.price"
+                    :label="$t('notes.shoppingList.pricePlaceholder')"
+                    outlined
+                    dense
+                    required
+                    class="col"
+                  />
                   
-                  <div class="col-auto" style="min-width: 150px;">
-                    <q-input
-                      v-model="newItem.price"
-                      :label="$t('notes.shoppingList.pricePlaceholder')"
-                      outlined
+                  <!-- Botones en fila para mobile -->
+                  <div class="row q-gutter-xs">
+                    <q-btn
+                      v-if="isEditing"
+                      @click="cancelEdit"
+                      icon="cancel"
+                      color="grey"
+                      flat
+                      round
                       dense
-                      required
-                    />
+                    >
+                      <q-tooltip>{{ $t('common.cancel') }}</q-tooltip>
+                    </q-btn>
+                    <q-btn
+                      type="submit"
+                      :icon="isEditing ? 'check' : 'add'"
+                      :color="isFormValid ? 'positive' : 'grey'"
+                      :disable="!isFormValid"
+                      round
+                      dense
+                    >
+                      <q-tooltip>
+                        {{ isEditing ? $t('notes.shoppingList.updateItem') : $t('notes.shoppingList.addItem') }}
+                      </q-tooltip>
+                    </q-btn>
                   </div>
                 </div>
-                
-                <div class="row q-gutter-sm justify-end">
+
+                <!-- Botones con texto en pantallas más grandes -->
+                <div class="row q-gutter-sm justify-end gt-xs">
                   <q-btn
                     v-if="isEditing"
                     @click="cancelEdit"
                     :label="$t('common.cancel')"
                     color="grey"
                     outline
+                    dense
                   />
                   <q-btn
                     type="submit"
                     :label="isEditing ? $t('notes.shoppingList.updateItem') : $t('notes.shoppingList.addItem')"
                     color="positive"
                     :disable="!isFormValid"
+                    dense
                   />
                 </div>
               </q-form>
@@ -149,6 +208,9 @@ export default {
     },
     isEditing() {
       return this.editingItemId !== null
+    },
+    checkedItemsCount() {
+      return this.localItems.filter(item => item.checked).length
     }
   },
   watch: {
@@ -182,7 +244,6 @@ export default {
       console.log('addItem called, localItems:', this.localItems);
       
       if (this.isFormValid) {
-        // Asegurar que localItems es un array
         if (!Array.isArray(this.localItems)) {
           console.warn('localItems is not an array, resetting to empty array');
           this.localItems = [];
@@ -213,13 +274,30 @@ export default {
     editItem(item) {
       this.newItem = { name: item.name, price: item.price };
       this.editingItemId = item.id;
+      // Scroll al formulario para edición
+      this.$nextTick(() => {
+        document.querySelector('.form-mobile')?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      });
     },
     removeItem(id) {
-      this.localItems = this.localItems.filter(item => item.id !== id);
+      this.$q.dialog({
+        title: this.$t('common.confirmDelete'),
+        message: this.$t('notes.shoppingList.confirmDeleteItem'),
+        cancel: true,
+        persistent: true
+      }).onOk(() => {
+        this.localItems = this.localItems.filter(item => item.id !== id);
+      });
     },
     cancelEdit() {
       this.newItem = { name: '', price: '' };
       this.editingItemId = null;
+    },
+    clearCompleted() {
+      this.localItems = this.localItems.filter(item => !item.checked);
     },
     saveChanges(items) {
       const jsonContent = JSON.stringify(items);
@@ -230,5 +308,64 @@ export default {
 </script>
 
 <style scoped>
-/* Estilos personalizados si son necesarios */
+/* Estilos optimizados para mobile */
+.mobile-card {
+  border-radius: 12px;
+}
+
+.list-item-mobile {
+  min-height: 56px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.list-item-mobile:hover {
+  background-color: #f8f9fa;
+}
+
+.item-name {
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+.min-width-auto {
+  min-width: auto !important;
+}
+
+/* Mejoras de responsive */
+@media (max-width: 599px) {
+  .q-pa-md {
+    padding: 12px;
+  }
+  
+  .text-h5 {
+    font-size: 1.25rem;
+  }
+  
+  .text-h6 {
+    font-size: 1.1rem;
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 380px) {
+  .list-item-mobile {
+    min-height: 52px;
+  }
+  
+  .q-btn--round {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Transiciones suaves */
+.q-item {
+  transition: background-color 0.3s ease;
+}
+
+/* Mejorar la legibilidad del texto tachado */
+.text-strike {
+  opacity: 0.7;
+}
 </style>

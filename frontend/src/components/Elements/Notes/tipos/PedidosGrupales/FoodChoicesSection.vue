@@ -15,7 +15,7 @@
       </q-banner>
 
       <!-- Agregar comida personalizada -->
-      <q-card flat bordered class="q-mb-md bg-grey-2">
+      <q-card flat bordered class="q-mb-md ">
         <q-card-section>
           <div class="text-subtitle1 text-weight-medium q-mb-md">{{ $t('notes.groupOrder.menu.addItem') }}</div>
           <div class="row q-gutter-sm q-mb-md">
@@ -56,7 +56,7 @@
           <div 
             v-for="food in foodOptions" 
             :key="food.id"
-            class="row items-center justify-between q-pa-sm bg-grey-1"
+            class="row items-center justify-between q-pa-sm "
             style="border-radius: 8px;"
           >
             <div class="col">

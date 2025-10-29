@@ -1,71 +1,52 @@
-# Usa la imagen base de PHP con Apache
-FROM php:8.1-apache
+# Usa la imagen base de PHP 8.2 con FPM (más ligero que Apache para desarrollo)
+FROM php:8.2-fpm
 
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     git \
+    curl \
     unzip \
-    libzip-dev
+    libzip-dev \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Configuración de Apache
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
-    a2enmod rewrite && \
-    sed -i 's|/var/www/html|/var/www/public|' /etc/apache2/sites-available/000-default.conf
-
-# Extensiones de PHP
-RUN docker-php-ext-install pdo pdo_mysql zip
+# Instalar extensiones de PHP
+RUN docker-php-ext-install pdo pdo_mysql zip mbstring exif pcntl bcmath gd
 
 # Instalar Redis extension
 RUN pecl install redis && docker-php-ext-enable redis
 
 # Instalar Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Crear usuario no-root
+RUN useradd -G www-data,root -u 1000 -d /home/tidyuser tidyuser && \
+    mkdir -p /home/tidyuser/.composer && \
+    chown -R tidyuser:tidyuser /home/tidyuser
 
 # Establecer directorio de trabajo
 WORKDIR /var/www
 
-# Copiar TODO el código FUENTE (incluyendo artisan)
-COPY . .
-
-# Instalar dependencias de Composer
-RUN composer install --no-dev --optimize-autoloader --no-scripts
-
-# Instalar Node.js y npm
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs
-
-# Verificar instalación de Node
-RUN node --version && npm --version
-
-# Instalar dependencias de Node
-RUN npm ci
-
-# Verificar que los archivos de entrada existen
-RUN ls -la resources/js/app.js resources/sass/app.scss
-
-# Compilar assets con debug
-RUN npm run build
-
-# Verificar que el build fue exitoso
-RUN ls -la public/build/ && ls -la public/build/manifest.json
+# Copiar código
+COPY --chown=tidyuser:tidyuser . /var/www
 
 # Crear directorios de storage necesarios
 RUN mkdir -p storage/logs \
     storage/framework/cache \
     storage/framework/sessions \
     storage/framework/views \
-    storage/app/public
+    storage/app/public \
+    bootstrap/cache
 
 # Permisos en directorios críticos
 RUN chmod -R 775 storage bootstrap/cache && \
-    chown -R www-data:www-data /var/www
+    chown -R tidyuser:tidyuser /var/www
 
-# Puerto expuesto
-EXPOSE 80
+# Cambiar al usuario no-root
+USER tidyuser
 
-# Script de inicio que ejecuta migraciones y luego Apache
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
-# Iniciar con script personalizado
-CMD ["docker-entrypoint.sh"]
+# Puerto expuesto (para php artisan serve)
+EXPOSE 8000

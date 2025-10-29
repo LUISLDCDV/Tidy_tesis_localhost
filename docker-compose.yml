@@ -56,8 +56,8 @@ services:
     command: >
       sh -c "composer install --no-interaction &&
              php artisan key:generate --force &&
-             php artisan migrate --force &&
-             php artisan db:seed --force &&
+             php artisan migrate --force || true &&
+             php artisan db:seed --force || true &&
              php artisan serve --host=0.0.0.0 --port=8000"
 
   # Frontend Vue.js + Quasar

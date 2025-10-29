@@ -2,7 +2,7 @@
   <q-item 
     clickable
     v-ripple
-    :class="{ 'bg-grey-2': highlighted }"
+    :class="{ '': highlighted }"
     class="rounded"
   >
     <q-item-section avatar>

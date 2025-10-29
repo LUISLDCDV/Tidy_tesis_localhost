@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md bg-grey-1">
+  <q-page class="q-pa-md ">
     <div class="row justify-center">
       <div class="col-12 col-lg-10">
         <div class="text-h4 text-weight-bold q-mb-md">{{ $t('notes.recommendations.title') }}</div>

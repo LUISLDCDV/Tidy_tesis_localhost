@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md bg-grey-1">
+  <q-page class="q-pa-md ">
     <div class="row justify-center">
       <div class="col-12">
         <!-- Lista de tareas -->
@@ -39,7 +39,7 @@
           <q-card-section class="q-pa-none">
             <q-markup-table flat bordered>
               <thead>
-                <tr class="bg-grey-3">
+                <tr class="">
                   <th v-for="day in daysOfWeek" :key="day" class="text-left">
                     {{ day }}
                   </th>

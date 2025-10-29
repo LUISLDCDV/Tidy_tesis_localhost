@@ -8,7 +8,7 @@
           v-for="(items, person) in orders" 
           :key="person"
         >
-          <q-card flat bordered class="bg-grey-2">
+          <q-card flat bordered class="">
             <q-card-section>
               <div class="row justify-between items-center q-mb-sm">
                 <div class="text-subtitle1 text-weight-medium">{{ person }}</div>

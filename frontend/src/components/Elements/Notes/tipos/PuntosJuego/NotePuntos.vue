@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md bg-grey-1">
+  <q-page class="q-pa-md ">
     <div class="row justify-center">
       <div class="col-12 col-lg-10">
         <q-card flat bordered>
@@ -31,7 +31,7 @@
                 :key="index"
                 class="col-12 col-sm-6 col-md-4"
               >
-                <q-card flat bordered class="bg-grey-2">
+                <q-card flat bordered class="">
                   <q-card-section>
                     <div class="text-h6 text-weight-medium q-mb-sm">{{ player.name }}</div>
                     <div class="text-body1 text-grey-8 q-mb-md">
@@ -84,7 +84,6 @@
 
 <script>
 
-// TODO CAMBIAR FORMATO Y INPUT PARA VALOR PUNTO
 import PlayerCard from './PlayerCard.vue';
 
 export default {

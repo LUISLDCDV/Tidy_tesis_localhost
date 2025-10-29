@@ -603,7 +603,6 @@ export default {
       
       try {
         console.log('Calendario seleccionado:', calendario);
-        // TODO: Implementar selección de calendario con Pinia
         this.$q.notify({
           type: 'positive',
           message: `Calendario "${calendario.nombre}" seleccionado`,

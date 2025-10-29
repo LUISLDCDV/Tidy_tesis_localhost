@@ -44,7 +44,7 @@
     </div>
 
     <!-- Comments and Assistance Section -->
-    <div class="feedback-section bg-grey-1 q-pa-xl">
+    <div class="feedback-section  q-pa-xl">
       <div class="max-width-800 q-mx-auto">
         <div class="text-center q-mb-lg">
           <q-icon name="feedback" size="60px" color="primary" class="q-mb-md" />
