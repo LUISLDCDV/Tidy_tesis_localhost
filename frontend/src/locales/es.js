@@ -19,8 +19,8 @@ export default {
         description: 'Crea notas de diferentes tipos: simples, recetas, listas de compras y más. Organiza tu información de manera práctica.'
       },
       alarmsReminders: {
-        title: 'Alarmas y Recordatorios',
-        description: 'Configura alarmas con geolocalización y notificaciones personalizadas. Nunca olvides una tarea importante.'
+        title: 'Alarmas Personalizadas',
+        description: 'Configura alarmas y notificaciones personalizadas. Nunca olvides una tarea importante.'
       },
       objectivesGoals: {
         title: 'Objetivos y Metas',
@@ -43,8 +43,8 @@ export default {
         description: 'Desbloquea funciones avanzadas con el plan Premium. Elementos ilimitados y más características.'
       },
       security: {
-        title: 'Seguridad',
-        description: 'Tus datos están protegidos con autenticación segura y encriptación. Tu privacidad es nuestra prioridad.'
+        title: 'Multiidioma',
+        description: 'Disponible en español, inglés y portugués. Cambia el idioma en cualquier momento y usa Tidy en tu lengua preferida.'
       }
     },
     cta: {
@@ -186,11 +186,11 @@ export default {
       },
       q9: {
         question: '¿Qué beneficios ofrece la versión Premium?',
-        answer: 'La versión Premium de Tidy incluye características avanzadas como: almacenamiento ilimitado de notas y objetivos, temas personalizados adicionales, estadísticas detalladas de productividad, backups automáticos en la nube, y soporte prioritario. Además, ayudas a mantener y mejorar la aplicación.'
+        answer: 'La versión Premium de Tidy incluye características avanzadas como: acceso a templates personalizados de notas, temas personalizados adicionales, estadísticas detalladas de productividad, plantillas predefinidas para diferentes tipos de contenido, y soporte prioritario. Además, ayudas a mantener y mejorar la aplicación.'
       },
       q10: {
-        question: '¿Cómo puedo asegurar la privacidad de mis datos?',
-        answer: 'Tidy toma muy en serio tu privacidad. Todos tus datos están encriptados y almacenados de forma segura. Puedes revisar y actualizar tu configuración de privacidad en la sección de Ajustes. También puedes exportar o eliminar todos tus datos en cualquier momento si lo deseas.'
+        question: '¿Puedo trabajar sin conexión a internet?',
+        answer: 'Sí, Tidy está diseñado para funcionar completamente offline. Todos tus datos se almacenan localmente en tu dispositivo, permitiéndote crear notas, alarmas, objetivos y eventos sin conexión. Cuando te conectes a internet, tus datos se sincronizarán automáticamente con la nube, manteniendo toda tu información respaldada y accesible desde cualquier dispositivo.'
       }
     },
     feedback: {
@@ -1094,7 +1094,7 @@ export default {
       unlimitedSync: 'Sincronización ilimitada',
       prioritySupport: 'Soporte prioritario',
       premiumThemes: 'Temas premium',
-      unlimitedStorage: 'Sin límites de almacenamiento'
+      noteTemplates: 'Templates personalizados de notas'
     },
     statusLabels: {
       active: 'Activo',

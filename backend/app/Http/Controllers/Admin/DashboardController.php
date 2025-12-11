@@ -25,11 +25,22 @@ class DashboardController extends Controller
     public function index()
     {
         try {
+            Log::info('📊 Iniciando carga de dashboard');
+
             $stats = $this->getSystemStats();
+            Log::info('✅ System stats cargado');
+
             $userStats = $this->getUserStats();
+            Log::info('✅ User stats cargado');
+
             $elementStats = $this->getElementStats();
+            Log::info('✅ Element stats cargado');
+
             $recentActivity = $this->getRecentActivity();
+            Log::info('✅ Recent activity cargado');
+
             $topUsers = $this->getTopUsers();
+            Log::info('✅ Top users cargado');
 
             return response()->json([
                 'success' => true,
@@ -44,10 +55,14 @@ class DashboardController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            Log::error('❌ Error en dashboard: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error obteniendo datos del dashboard',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => config('app.debug') ? $e->getTraceAsString() : null
             ], 500);
         }
     }
@@ -148,31 +163,39 @@ class DashboardController extends Controller
      */
     private function getRecentActivity()
     {
-        $recentUsers = User::with('usuarioCuenta')
+        $recentUsers = User::with(['usuarioCuenta', 'roles'])
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get()
+            ->filter(function ($user) {
+                return $user && $user->name;
+            })
             ->map(function ($user) {
                 return [
                     'id' => $user->id,
-                    'name' => $user->name . ' ' . $user->last_name,
-                    'email' => $user->email,
-                    'level' => $user->usuarioCuenta->nivel_id ?? 1,
-                    'premium' => $user->usuarioCuenta->premium ?? false,
-                    'created_at' => $user->created_at->diffForHumans(),
+                    'name' => ($user->name ?? '') . ' ' . ($user->last_name ?? ''),
+                    'email' => $user->email ?? '',
+                    'level' => $user->usuarioCuenta->current_level ?? 1,
+                    'premium' => $user->usuarioCuenta->is_premium ?? false,
+                    'premium_expires' => $user->usuarioCuenta && $user->usuarioCuenta->premium_expires_at
+                        ? $user->usuarioCuenta->premium_expires_at->format('d/m/Y')
+                        : null,
+                    'total_xp' => $user->usuarioCuenta->total_xp ?? 0,
+                    'is_admin' => $user->roles && $user->roles->contains('name', 'admin'),
+                    'created_at' => $user->created_at ? $user->created_at->diffForHumans() : 'Desconocido',
                 ];
-            });
+            })
+            ->values();
 
-        $recentElements = Elemento::with('usuario:id,name,last_name')
-            ->orderBy('created_at', 'desc')
+        $recentElements = Elemento::orderBy('created_at', 'desc')
             ->limit(10)
             ->get()
             ->map(function ($element) {
                 return [
                     'id' => $element->id,
-                    'name' => $element->nombre,
+                    'name' => $element->tipo ?? 'Sin tipo',
                     'type' => $element->tipo,
-                    'user' => $element->usuario ? $element->usuario->name . ' ' . $element->usuario->last_name : 'Usuario eliminado',
+                    'user' => 'Sistema',
                     'created_at' => $element->created_at->diffForHumans(),
                 ];
             });
@@ -189,32 +212,40 @@ class DashboardController extends Controller
     private function getTopUsers()
     {
         $topByExperience = UsuarioCuenta::with('user:id,name,last_name,email')
-            ->orderBy('experiencia_total', 'desc')
+            ->orderBy('total_xp', 'desc')
             ->limit(10)
             ->get()
+            ->filter(function ($cuenta) {
+                return $cuenta->user && $cuenta->user->name;
+            })
             ->map(function ($cuenta) {
                 return [
                     'id' => $cuenta->user_id,
-                    'name' => $cuenta->user->name . ' ' . $cuenta->user->last_name,
-                    'email' => $cuenta->user->email,
-                    'experience' => $cuenta->experiencia_total,
-                    'level' => $cuenta->nivel_id,
-                    'premium' => $cuenta->premium,
+                    'name' => ($cuenta->user->name ?? '') . ' ' . ($cuenta->user->last_name ?? ''),
+                    'email' => $cuenta->user->email ?? '',
+                    'experience' => $cuenta->total_xp ?? 0,
+                    'level' => $cuenta->current_level ?? 1,
+                    'premium' => $cuenta->is_premium ?? false,
                 ];
-            });
+            })
+            ->values();
 
         $topByElements = User::withCount('elementos')
             ->orderBy('elementos_count', 'desc')
             ->limit(10)
             ->get()
+            ->filter(function ($user) {
+                return $user && $user->name;
+            })
             ->map(function ($user) {
                 return [
                     'id' => $user->id,
-                    'name' => $user->name . ' ' . $user->last_name,
-                    'email' => $user->email,
-                    'elements_count' => $user->elementos_count,
+                    'name' => ($user->name ?? '') . ' ' . ($user->last_name ?? ''),
+                    'email' => $user->email ?? '',
+                    'elements_count' => $user->elementos_count ?? 0,
                 ];
-            });
+            })
+            ->values();
 
         return [
             'top_by_experience' => $topByExperience,
@@ -234,9 +265,10 @@ class DashboardController extends Controller
             return 0;
         }
 
-        $activeUsers = User::whereHas('usuarioCuenta', function ($query) use ($startDate) {
-            $query->where('fecha_ultimo_acceso', '>=', $startDate);
-        })->where('created_at', '>=', $startDate)->count();
+        // Usar last_login_at de la tabla users en lugar de fecha_ultimo_acceso
+        $activeUsers = User::where('created_at', '>=', $startDate)
+            ->where('last_login_at', '>=', $startDate)
+            ->count();
 
         return round(($activeUsers / $newUsers) * 100, 2);
     }
@@ -267,13 +299,13 @@ class DashboardController extends Controller
 
             if ($request->filled('level')) {
                 $query->whereHas('usuarioCuenta', function ($q) use ($request) {
-                    $q->where('nivel_id', $request->level);
+                    $q->where('current_level', $request->level);
                 });
             }
 
             if ($request->filled('premium')) {
                 $query->whereHas('usuarioCuenta', function ($q) use ($request) {
-                    $q->where('premium', $request->premium === 'true');
+                    $q->where('is_premium', $request->premium === 'true');
                 });
             }
 
@@ -288,8 +320,8 @@ class DashboardController extends Controller
             $sortDirection = $request->get('sort_direction', 'desc');
 
             if ($sortBy === 'experience') {
-                $query->join('usuario_cuentas', 'users.id', '=', 'usuario_cuentas.user_id')
-                      ->orderBy('usuario_cuentas.experiencia_total', $sortDirection)
+                $query->join('cuentas', 'users.id', '=', 'cuentas.user_id')
+                      ->orderBy('cuentas.total_xp', $sortDirection)
                       ->select('users.*');
             } else {
                 $query->orderBy($sortBy, $sortDirection);
@@ -378,11 +410,13 @@ class DashboardController extends Controller
         $days = $this->getPeriodDays($period);
         $startDate = Carbon::now()->subDays($days);
 
-        return UsuarioCuenta::select(
-                DB::raw('DATE(fecha_ultimo_acceso) as date'),
+        // Usar last_login_at de la tabla users
+        return User::select(
+                DB::raw('DATE(last_login_at) as date'),
                 DB::raw('count(*) as count')
             )
-            ->where('fecha_ultimo_acceso', '>=', $startDate)
+            ->whereNotNull('last_login_at')
+            ->where('last_login_at', '>=', $startDate)
             ->groupBy('date')
             ->orderBy('date')
             ->get();
@@ -393,13 +427,13 @@ class DashboardController extends Controller
         $days = $this->getPeriodDays($period);
         $startDate = Carbon::now()->subDays($days);
 
-        // Simular datos de ingresos basados en usuarios premium
+        // Simular datos de ingresos basados en usuarios premium creados
         return UsuarioCuenta::select(
-                DB::raw('DATE(fecha_premium) as date'),
+                DB::raw('DATE(created_at) as date'),
                 DB::raw('count(*) * 9.99 as revenue') // Asumiendo precio de $9.99
             )
-            ->where('premium', true)
-            ->where('fecha_premium', '>=', $startDate)
+            ->where('is_premium', true)
+            ->where('created_at', '>=', $startDate)
             ->groupBy('date')
             ->orderBy('date')
             ->get();

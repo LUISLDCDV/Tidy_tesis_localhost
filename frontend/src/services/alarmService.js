@@ -126,6 +126,16 @@ class AlarmService {
         return await this.scheduleNativeAlarm(alarm, alarmDate);
       }
 
+      const testTime = new Date()
+      testTime.setSeconds(testTime.getSeconds() + 10)
+      
+      const result = await AlarmPlugin.scheduleAlarm({
+        id: 99999, // ID de prueba
+        triggerTime: testTime.getTime(),
+        title: 'Prueba de Alarma',
+        message: '¡La alarma nativa funciona! 🎉'
+      })
+
       const notification = {
         id: alarm.id,
         title: alarm.nombre || 'Alarma Tidy',
@@ -235,38 +245,30 @@ class AlarmService {
   async scheduleNativeAlarm(alarm, alarmDate) {
     try {
       console.log('⚡ Programando alarma con AlarmManager nativo');
+      console.log('📋 Datos de alarma recibidos:', JSON.stringify(alarm, null, 2));
+      console.log('📅 Fecha programada:', alarmDate.toISOString());
+      console.log('⏰ Timestamp:', alarmDate.getTime());
 
-      // Datos base de la alarma
+      // SIMPLIFICADO: Igual que testAlarmNow que SÍ FUNCIONA
+      // Solo pasar los 4 parámetros esenciales
       const baseAlarmData = {
         id: alarm.id,
         triggerTime: alarmDate.getTime(),
         title: alarm.nombre || 'Alarma Tidy',
-        message: alarm.descripcion || 'Es hora de tu alarma',
-        // Pasar info de recurrencia para que el receiver pueda reprogramar
-        isRecurring: alarm.es_recurrente || false,
-        frequency: alarm.frecuencia || null,
-        repeatDays: alarm.configuraciones?.repeat_days || null
+        message: alarm.descripcion || 'Es hora de tu alarma'
       };
 
+      console.log('📤 Datos enviados al plugin (SIMPLIFICADOS):', JSON.stringify(baseAlarmData, null, 2));
+
       const result = await AlarmPlugin.scheduleAlarm(baseAlarmData);
+
+      console.log('📥 Respuesta del plugin:', JSON.stringify(result, null, 2));
 
       if (result.success) {
         console.log(`✅ Alarma nativa ${alarm.id} programada para ${result.scheduledFor}`);
 
-        // Si es recurrente, guardar info adicional en localStorage para reprogramación
-        if (alarm.es_recurrente) {
-          const recurringInfo = {
-            id: alarm.id,
-            frequency: alarm.frecuencia,
-            repeatDays: alarm.configuraciones?.repeat_days,
-            originalTime: alarmDate.getTime(),
-            title: alarm.nombre || 'Alarma Tidy',
-            message: alarm.descripcion || 'Es hora de tu alarma'
-          };
-
-          localStorage.setItem(`recurring_alarm_${alarm.id}`, JSON.stringify(recurringInfo));
-          console.log(`💾 Info de recurrencia guardada para alarma ${alarm.id}`);
-        }
+        // TODO: Implementar recurrencia en el futuro si es necesario
+        // Por ahora, solo programamos alarmas simples que funcionan
 
         return true;
       } else {

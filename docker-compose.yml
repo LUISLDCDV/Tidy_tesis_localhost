@@ -4,7 +4,6 @@ services:
   # Base de datos MySQL
   mysql:
     image: mysql:8.0
-    container_name: tidy_mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -28,7 +27,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: tidy_backend
     restart: unless-stopped
     working_dir: /var/www
     environment:
@@ -40,7 +38,7 @@ services:
       DB_PASSWORD: tidy_password
       APP_ENV: local
       APP_DEBUG: "true"
-      APP_KEY: base64:YOUR_APP_KEY_HERE
+      APP_KEY: base64:YZWD/pLBvoCJB9Bvif5CRF0Kez7RwtwCQ+GUR4msjDQ=
       APP_URL: http://localhost:8000
       FRONTEND_URL: http://localhost:9000
     ports:
@@ -54,8 +52,7 @@ services:
     networks:
       - tidy_network
     command: >
-      sh -c "composer install --no-interaction &&
-             php artisan key:generate --force &&
+      sh -c "php artisan key:generate --force &&
              php artisan migrate --force || true &&
              php artisan db:seed --force || true &&
              php artisan serve --host=0.0.0.0 --port=8000"
@@ -65,7 +62,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: tidy_frontend
     restart: unless-stopped
     working_dir: /app
     environment:
@@ -85,7 +81,6 @@ services:
   # phpMyAdmin (opcional, para gestionar BD)
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: tidy_phpmyadmin
     restart: unless-stopped
     environment:
       PMA_HOST: mysql

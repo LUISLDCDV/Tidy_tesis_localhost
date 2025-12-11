@@ -23,8 +23,8 @@ class LevelSystemTest extends TestCase
         $this->user = User::factory()->create();
         $this->cuenta = UsuarioCuenta::factory()->create([
             'user_id' => $this->user->id,
-            'nivel' => 1,
-            'puntos' => 0
+            'current_level' => 1,
+            'total_xp' => 0
         ]);
         Sanctum::actingAs($this->user);
     }
@@ -36,9 +36,9 @@ class LevelSystemTest extends TestCase
 
         $response->assertStatus(200)
                 ->assertJsonStructure([
-                    'nivel',
-                    'puntos',
-                    'puntos_siguiente_nivel',
+                    'current_level',
+                    'total_xp',
+                    'xp_required_for_next_level',
                     'porcentaje_progreso'
                 ]);
     }
@@ -46,7 +46,7 @@ class LevelSystemTest extends TestCase
     /** @test */
     public function it_awards_points_when_creating_element()
     {
-        $initialPoints = $this->cuenta->puntos;
+        $initialPoints = $this->cuenta->total_xp;
 
         // Crear una nota debería dar puntos
         $this->postJson('/api/notes', [
@@ -55,7 +55,7 @@ class LevelSystemTest extends TestCase
         ]);
 
         $this->cuenta->refresh();
-        $this->assertGreaterThan($initialPoints, $this->cuenta->puntos);
+        $this->assertGreaterThan($initialPoints, $this->cuenta->total_xp);
     }
 
     /** @test */
@@ -63,8 +63,8 @@ class LevelSystemTest extends TestCase
     {
         // Establecer puntos cerca del siguiente nivel
         $this->cuenta->update([
-            'nivel' => 1,
-            'puntos' => 95 // Asumiendo que nivel 2 requiere 100 puntos
+            'current_level' => 1,
+            'total_xp' => 95 // Asumiendo que nivel 2 requiere 100 puntos
         ]);
 
         // Crear elemento para obtener puntos y subir de nivel
@@ -74,14 +74,14 @@ class LevelSystemTest extends TestCase
         ]);
 
         $this->cuenta->refresh();
-        $this->assertGreaterThanOrEqual(2, $this->cuenta->nivel);
+        $this->assertGreaterThanOrEqual(2, $this->cuenta->current_level);
     }
 
     /** @test */
     public function it_unlocks_note_types_based_on_level()
     {
         // Nivel bajo no debería tener acceso a notas de nivel alto
-        $this->cuenta->update(['nivel' => 1]);
+        $this->cuenta->update(['current_level' => 1]);
 
         $response = $this->getJson('/api/note-types/available');
 
@@ -96,7 +96,7 @@ class LevelSystemTest extends TestCase
     public function premium_users_get_premium_note_types_at_level_1()
     {
         $this->cuenta->update([
-            'nivel' => 1,
+            'current_level' => 1,
             'is_premium' => true,
             'premium_expires_at' => now()->addMonths(1)
         ]);

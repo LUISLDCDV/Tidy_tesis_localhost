@@ -228,6 +228,7 @@ export default {
     },
     
     commitNoteToStore() {
+      // TODO: Migrar a Pinia
       console.log('Saving note:', {
         elemento_id: this.id,
         tipo_nota_id: this.type,
@@ -567,14 +568,12 @@ export default {
   }
 }
 
-/* SOLUCIÓN DE EMERGENCIA: Si nada funciona, reset completo */
 .note-header.reset-position {
   position: relative !important;
   top: auto !important;
   z-index: auto !important;
 }
 
-/* Asegurar que el contenido no se esconde detrás del header */
 .dinamic-note-container.offset-for-header {
   padding-top: 70px; /* Espacio para el header */
 }

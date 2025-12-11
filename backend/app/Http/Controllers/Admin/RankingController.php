@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UsuarioCuenta;
 use App\Models\Elementos\Elemento;
-use App\Models\Nivel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
@@ -81,26 +80,29 @@ class RankingController extends Controller
     private function getExperienceRanking($limit)
     {
         return UsuarioCuenta::with([
-            'user:id,name,last_name,email',
-            'nivel:id,nombre,color'
+            'user:id,name,last_name,email,last_login_at'
         ])
-        ->orderBy('experiencia_total', 'desc')
+        ->orderBy('total_xp', 'desc')
         ->limit($limit)
         ->get()
+        ->filter(function ($cuenta) {
+            return $cuenta->user && $cuenta->user->name;
+        })
         ->map(function ($cuenta, $index) {
             return [
                 'id' => $cuenta->user_id,
-                'name' => $cuenta->user->name . ' ' . $cuenta->user->last_name,
-                'email' => $cuenta->user->email,
-                'experience' => $cuenta->experiencia_total,
-                'level' => $cuenta->nivel_id,
-                'level_name' => $cuenta->nivel->nombre ?? 'Sin nivel',
-                'level_color' => $cuenta->nivel->color ?? '#grey',
-                'premium' => $cuenta->premium,
+                'name' => ($cuenta->user->name ?? '') . ' ' . ($cuenta->user->last_name ?? ''),
+                'email' => $cuenta->user->email ?? '',
+                'experience' => $cuenta->total_xp ?? 0,
+                'level' => $cuenta->current_level ?? 1,
+                'level_name' => 'Nivel ' . ($cuenta->current_level ?? 1),
+                'level_color' => '#4CAF50',
+                'premium' => $cuenta->is_premium ?? false,
                 'position' => $index + 1,
-                'last_activity' => $cuenta->fecha_ultimo_acceso?->diffForHumans()
+                'last_activity' => $cuenta->user->last_login_at?->diffForHumans() ?? 'Nunca'
             ];
-        });
+        })
+        ->values();
     }
 
     /**
@@ -113,20 +115,24 @@ class RankingController extends Controller
             ->orderBy('elementos_count', 'desc')
             ->limit($limit)
             ->get()
+            ->filter(function ($user) {
+                return $user && $user->name;
+            })
             ->map(function ($user, $index) {
                 return [
                     'id' => $user->id,
-                    'name' => $user->name . ' ' . $user->last_name,
-                    'email' => $user->email,
-                    'elements_count' => $user->elementos_count,
-                    'level' => $user->usuarioCuenta->nivel_id ?? 1,
-                    'level_name' => $user->usuarioCuenta->nivel->nombre ?? 'Sin nivel',
-                    'level_color' => $user->usuarioCuenta->nivel->color ?? '#grey',
-                    'premium' => $user->usuarioCuenta->premium ?? false,
+                    'name' => ($user->name ?? '') . ' ' . ($user->last_name ?? ''),
+                    'email' => $user->email ?? '',
+                    'elements_count' => $user->elementos_count ?? 0,
+                    'level' => $user->usuarioCuenta->current_level ?? 1,
+                    'level_name' => 'Nivel ' . ($user->usuarioCuenta->current_level ?? 1),
+                    'level_color' => '#4CAF50',
+                    'premium' => $user->usuarioCuenta->is_premium ?? false,
                     'position' => $index + 1,
-                    'last_activity' => $user->usuarioCuenta->fecha_ultimo_acceso?->diffForHumans()
+                    'last_activity' => $user->last_login_at?->diffForHumans() ?? 'Nunca'
                 ];
-            });
+            })
+            ->values();
     }
 
     /**
@@ -136,23 +142,25 @@ class RankingController extends Controller
     {
         // Calcular score de actividad basado en múltiples factores
         $users = UsuarioCuenta::with([
-            'user:id,name,last_name,email',
-            'nivel:id,nombre,color'
+            'user:id,name,last_name,email,last_login_at'
         ])
         ->get()
+        ->filter(function ($cuenta) {
+            return $cuenta->user && $cuenta->user->name;
+        })
         ->map(function ($cuenta) {
             $activityScore = $this->calculateActivityScore($cuenta);
 
             return [
                 'id' => $cuenta->user_id,
-                'name' => $cuenta->user->name . ' ' . $cuenta->user->last_name,
-                'email' => $cuenta->user->email,
+                'name' => ($cuenta->user->name ?? '') . ' ' . ($cuenta->user->last_name ?? ''),
+                'email' => $cuenta->user->email ?? '',
                 'activity_score' => $activityScore,
-                'level' => $cuenta->nivel_id,
-                'level_name' => $cuenta->nivel->nombre ?? 'Sin nivel',
-                'level_color' => $cuenta->nivel->color ?? '#grey',
-                'premium' => $cuenta->premium,
-                'last_activity' => $cuenta->fecha_ultimo_acceso?->diffForHumans()
+                'level' => $cuenta->current_level ?? 1,
+                'level_name' => 'Nivel ' . ($cuenta->current_level ?? 1),
+                'level_color' => '#4CAF50',
+                'premium' => $cuenta->is_premium ?? false,
+                'last_activity' => $cuenta->user->last_login_at?->diffForHumans() ?? 'Nunca'
             ];
         })
         ->sortByDesc('activity_score')
@@ -174,21 +182,21 @@ class RankingController extends Controller
         $score = 0;
 
         // Puntos por experiencia (1 punto por cada 10 XP)
-        $score += ($cuenta->experiencia_total / 10);
+        $score += ($cuenta->total_xp / 10);
 
         // Puntos por actividad reciente
-        if ($cuenta->fecha_ultimo_acceso) {
-            $daysAgo = $cuenta->fecha_ultimo_acceso->diffInDays(now());
+        if ($cuenta->user && $cuenta->user->last_login_at) {
+            $daysAgo = $cuenta->user->last_login_at->diffInDays(now());
             $activityBonus = max(0, 100 - ($daysAgo * 5)); // Menos puntos por inactividad
             $score += $activityBonus;
         }
 
         // Puntos por elementos creados
-        $elementCount = Elemento::where('usuario_id', $cuenta->user_id)->count();
+        $elementCount = Elemento::where('cuenta_id', $cuenta->id)->count();
         $score += ($elementCount * 5);
 
         // Bonus por ser premium
-        if ($cuenta->premium) {
+        if ($cuenta->is_premium) {
             $score += 50;
         }
 
@@ -205,10 +213,10 @@ class RankingController extends Controller
     private function getGeneralStats()
     {
         $totalUsers = UsuarioCuenta::count();
-        $premiumUsers = UsuarioCuenta::where('premium', true)->count();
-        $activeUsers = UsuarioCuenta::where('fecha_ultimo_acceso', '>=', Carbon::now()->subDays(7))->count();
-        $avgExperience = UsuarioCuenta::avg('experiencia_total');
-        $avgLevel = UsuarioCuenta::avg('nivel_id');
+        $premiumUsers = UsuarioCuenta::where('is_premium', true)->count();
+        $activeUsers = User::where('last_login_at', '>=', Carbon::now()->subDays(7))->count();
+        $avgExperience = UsuarioCuenta::avg('total_xp');
+        $avgLevel = UsuarioCuenta::avg('current_level');
 
         return [
             'totalUsers' => $totalUsers,
@@ -224,21 +232,23 @@ class RankingController extends Controller
      */
     private function getLevelDistribution()
     {
-        return Nivel::withCount('usuariosCuenta')
-            ->orderBy('orden')
+        $totalUsers = UsuarioCuenta::count();
+
+        return UsuarioCuenta::select('current_level', DB::raw('count(*) as count'))
+            ->groupBy('current_level')
+            ->orderBy('current_level')
             ->get()
-            ->map(function ($nivel) {
-                $totalUsers = UsuarioCuenta::count();
-                $percentage = $totalUsers > 0 ? round(($nivel->usuarios_cuenta_count / $totalUsers) * 100, 2) : 0;
+            ->map(function ($item) use ($totalUsers) {
+                $percentage = $totalUsers > 0 ? round(($item->count / $totalUsers) * 100, 2) : 0;
 
                 return [
-                    'id' => $nivel->id,
-                    'name' => $nivel->nombre,
-                    'color' => $nivel->color,
-                    'icon' => $nivel->icono,
-                    'count' => $nivel->usuarios_cuenta_count,
+                    'id' => $item->current_level,
+                    'name' => 'Nivel ' . $item->current_level,
+                    'color' => '#4CAF50',
+                    'icon' => 'fa-trophy',
+                    'count' => $item->count,
                     'percentage' => $percentage,
-                    'order' => $nivel->orden
+                    'order' => $item->current_level
                 ];
             });
     }
@@ -249,27 +259,27 @@ class RankingController extends Controller
     public function userStats($userId)
     {
         try {
-            $user = User::with(['usuarioCuenta.nivel', 'elementos'])->findOrFail($userId);
+            $user = User::with(['usuarioCuenta', 'elementos'])->findOrFail($userId);
 
             $stats = [
                 'user_info' => [
                     'id' => $user->id,
-                    'name' => $user->name . ' ' . $user->last_name,
-                    'email' => $user->email,
+                    'name' => ($user->name ?? '') . ' ' . ($user->last_name ?? ''),
+                    'email' => $user->email ?? '',
                     'created_at' => $user->created_at,
                     'last_login' => $user->last_login_at,
                 ],
                 'level_info' => [
-                    'current_level' => $user->usuarioCuenta->nivel_id,
-                    'level_name' => $user->usuarioCuenta->nivel->nombre ?? 'Sin nivel',
-                    'experience' => $user->usuarioCuenta->experiencia_total,
-                    'premium' => $user->usuarioCuenta->premium,
+                    'current_level' => $user->usuarioCuenta->current_level ?? 1,
+                    'level_name' => 'Nivel ' . ($user->usuarioCuenta->current_level ?? 1),
+                    'experience' => $user->usuarioCuenta->total_xp ?? 0,
+                    'premium' => $user->usuarioCuenta->is_premium ?? false,
                 ],
                 'activity_stats' => [
                     'total_elements' => $user->elementos->count(),
                     'elements_by_type' => $user->elementos->groupBy('tipo')->map->count(),
                     'activity_score' => $this->calculateActivityScore($user->usuarioCuenta),
-                    'last_activity' => $user->usuarioCuenta->fecha_ultimo_acceso,
+                    'last_activity' => $user->last_login_at,
                 ],
                 'rankings' => [
                     'experience_position' => $this->getUserPosition($userId, 'experience'),
@@ -299,11 +309,14 @@ class RankingController extends Controller
     {
         switch ($type) {
             case 'experience':
-                $userExp = UsuarioCuenta::where('user_id', $userId)->value('experiencia_total');
-                return UsuarioCuenta::where('experiencia_total', '>', $userExp)->count() + 1;
+                $userExp = UsuarioCuenta::where('user_id', $userId)->value('total_xp');
+                return UsuarioCuenta::where('total_xp', '>', $userExp)->count() + 1;
 
             case 'elements':
-                $userElements = Elemento::where('usuario_id', $userId)->count();
+                $user = User::withCount('elementos')->find($userId);
+                if (!$user) return 0;
+
+                $userElements = $user->elementos_count;
                 return User::withCount('elementos')
                     ->having('elementos_count', '>', $userElements)
                     ->count() + 1;
@@ -337,21 +350,25 @@ class RankingController extends Controller
 
             // Esta funcionalidad requeriría una tabla de historial de niveles
             // Por ahora, simulamos con los datos actuales
-            $recentLevelChanges = UsuarioCuenta::with(['user:id,name,last_name', 'nivel:id,nombre,color'])
+            $recentLevelChanges = UsuarioCuenta::with(['user:id,name,last_name'])
                 ->orderBy('updated_at', 'desc')
                 ->limit($limit)
                 ->get()
+                ->filter(function ($cuenta) {
+                    return $cuenta->user && $cuenta->user->name;
+                })
                 ->map(function ($cuenta) {
                     return [
                         'user_id' => $cuenta->user_id,
-                        'user_name' => $cuenta->user->name . ' ' . $cuenta->user->last_name,
-                        'current_level' => $cuenta->nivel_id,
-                        'level_name' => $cuenta->nivel->nombre,
-                        'level_color' => $cuenta->nivel->color,
-                        'experience' => $cuenta->experiencia_total,
-                        'updated_at' => $cuenta->updated_at->diffForHumans()
+                        'user_name' => ($cuenta->user->name ?? '') . ' ' . ($cuenta->user->last_name ?? ''),
+                        'current_level' => $cuenta->current_level ?? 1,
+                        'level_name' => 'Nivel ' . ($cuenta->current_level ?? 1),
+                        'level_color' => '#4CAF50',
+                        'experience' => $cuenta->total_xp ?? 0,
+                        'updated_at' => $cuenta->updated_at ? $cuenta->updated_at->diffForHumans() : 'Desconocido'
                     ];
-                });
+                })
+                ->values();
 
             return response()->json([
                 'success' => true,

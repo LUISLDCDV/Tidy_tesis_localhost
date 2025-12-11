@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">💳 Historial de Pagos</h1>
+                <h1 class="h3 mb-0" style="color: #2c3e50; ">💳 Historial de Pagos</h1>
                 <a href="{{ route('home') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Volver al Dashboard
                 </a>
@@ -107,7 +107,7 @@
             <!-- Filtros de búsqueda -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold" style="color: #1976D2; font-family: 'Google Sans Text', sans-serif;">🔍 Filtros</h6>
+                    <h6 class="m-0 font-weight-bold" style="color: #1976D2; "><i class="fas fa-search"></i> Filtros</h6>
                 </div>
                 <div class="card-body">
                     <form method="GET" action="{{ route('admin.dashboard.payments') }}">
@@ -155,8 +155,8 @@
             <!-- Tabla de pagos -->
             <div class="card shadow">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold" style="color: #1976D2; font-family: 'Google Sans Text', sans-serif;">
-                        📋 Historial de Pagos ({{ $payments->total() ?? 0 }} total)
+                    <h6 class="m-0 font-weight-bold" style="color: #1976D2; ">
+                        <i class="fas fa-clipboard-list"></i> Historial de Pagos ({{ $payments->total() ?? 0 }} total)
                     </h6>
                 </div>
                 <div class="card-body">
@@ -265,7 +265,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">
+                <h5 class="modal-title" style="color: #2c3e50; ">
                     💳 Detalles del Pago
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -344,7 +344,7 @@ window.showPaymentDetails = function(paymentId, payment) {
 
 .text-xs {
     font-size: 0.7rem;
-    font-family: 'Google Sans Text', sans-serif;
+    
 }
 
 .text-gray-800 {
@@ -402,7 +402,7 @@ window.showPaymentDetails = function(paymentId, payment) {
     font-size: 0.75rem;
     padding: 0.5em 0.8em;
     font-weight: 500;
-    font-family: 'Google Sans Text', sans-serif;
+    
 }
 
 .badge.bg-success {

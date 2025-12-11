@@ -10,7 +10,6 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(!!token.value)
   const loading = ref(false)
   const error = ref(null)
-  const rememberMe = ref(localStorage.getItem('remember_me') === 'true')
   const isLoggingOut = ref(false) // Protección contra múltiples logouts
   const tokenExpiresAt = ref(null)
   const tokenExpiresIn = ref(null)
@@ -37,7 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
   })
 
   // Acciones
-  async function login(credentials, remember = false) {
+  async function login(credentials) {
     loading.value = true
     error.value = null
 
@@ -50,26 +49,20 @@ export const useAuthStore = defineStore('auth', () => {
         expires_in
       } = response.data
 
-      // Guardar datos en el estado
+      // SIEMPRE guardar en localStorage primero para mantener la sesión
+      localStorage.setItem('auth_token', authToken)
+      localStorage.setItem('user', JSON.stringify(userData))
+      localStorage.setItem('token_expires_at', expires_at)
+
+      // Esperar a que localStorage se persista (importante en Capacitor)
+      await new Promise(resolve => setTimeout(resolve, 50))
+
+      // Luego actualizar el estado reactivo
       user.value = userData
       token.value = authToken
       isAuthenticated.value = true
-      rememberMe.value = remember
       tokenExpiresAt.value = expires_at
       tokenExpiresIn.value = expires_in
-
-      // Guardar en localStorage o sessionStorage según recordarme
-      if (remember) {
-        localStorage.setItem('auth_token', authToken)
-        localStorage.setItem('user', JSON.stringify(userData))
-        localStorage.setItem('remember_me', 'true')
-        localStorage.setItem('token_expires_at', expires_at)
-      } else {
-        sessionStorage.setItem('auth_token', authToken)
-        sessionStorage.setItem('user', JSON.stringify(userData))
-        sessionStorage.setItem('token_expires_at', expires_at)
-        localStorage.setItem('remember_me', 'false')
-      }
 
       // Limpiar datos offline para asegurar que el nuevo usuario vea solo sus datos
       try {
@@ -173,19 +166,17 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = null
     isAuthenticated.value = false
     error.value = null
+    tokenExpiresAt.value = null
+    tokenExpiresIn.value = null
 
-    // Limpiar datos de sesión
-    sessionStorage.removeItem('auth_token')
-    sessionStorage.removeItem('user')
+    // Limpiar localStorage
+    localStorage.removeItem('auth_token')
+    localStorage.removeItem('user')
+    localStorage.removeItem('user_data')
+    localStorage.removeItem('token_expires_at')
 
-    // Si es logout manual, limpiar todo incluyendo localStorage y datos offline
+    // Si es logout manual, limpiar todos los datos offline
     if (isManualLogout) {
-      localStorage.removeItem('auth_token')
-      localStorage.removeItem('user')
-      localStorage.removeItem('user_data')
-      localStorage.removeItem('remember_me')
-      rememberMe.value = false
-
       // Limpiar todos los datos offline (elementos, notas, etc.)
       try {
         const { clearAllData } = useOfflineStorage()
@@ -195,56 +186,51 @@ export const useAuthStore = defineStore('auth', () => {
         console.warn('Error al limpiar datos offline:', err)
       }
     }
-    // Si no es manual (ej: token expirado), mantener preferencia de recordarme
   }
 
   async function checkAuthStatus() {
-    // Primero revisar localStorage (recordarme activado)
-    let storedToken = localStorage.getItem('auth_token')
-    let storedUser = localStorage.getItem('user')
-    let storedExpiresAt = localStorage.getItem('token_expires_at')
-    let isFromLocalStorage = true
-
-    // Si no hay en localStorage, revisar sessionStorage
-    if (!storedToken) {
-      storedToken = sessionStorage.getItem('auth_token')
-      storedUser = sessionStorage.getItem('user')
-      storedExpiresAt = sessionStorage.getItem('token_expires_at')
-      isFromLocalStorage = false
-    }
-
-    // Actualizar estado de recordarme
-    rememberMe.value = localStorage.getItem('remember_me') === 'true'
+    // Siempre revisar localStorage
+    const storedToken = localStorage.getItem('auth_token')
+    const storedUser = localStorage.getItem('user')
+    const storedExpiresAt = localStorage.getItem('token_expires_at')
 
     if (storedToken && storedUser) {
       try {
-        // Validar que storedUser sea JSON válido antes de parsearlo
-        if (storedUser.trim().startsWith('{') || storedUser.trim().startsWith('[')) {
-          token.value = storedToken
-          user.value = JSON.parse(storedUser)
-          tokenExpiresAt.value = storedExpiresAt
-          isAuthenticated.value = true
-        } else {
-          throw new Error('Datos de usuario no son JSON válido')
+        // Intentar parsear datos del usuario
+        let parsedUser = null
+        try {
+          parsedUser = JSON.parse(storedUser)
+        } catch (parseError) {
+          // Datos corruptos, limpiar silenciosamente
+          console.warn('Datos de usuario corruptos, limpiando...')
+          await clearAuthData(false)
+          return
         }
+
+        // Validar que sea un objeto válido
+        if (!parsedUser || typeof parsedUser !== 'object') {
+          console.warn('Datos de usuario inválidos, limpiando...')
+          await clearAuthData(false)
+          return
+        }
+
+        // Datos válidos, restaurar sesión
+        token.value = storedToken
+        user.value = parsedUser
+        tokenExpiresAt.value = storedExpiresAt
+        isAuthenticated.value = true
 
         // Intentar verificar si el token sigue siendo válido (solo si hay servidor)
         try {
           const response = await api.auth.getUserData()
           user.value = response.data.user
-
-          // Actualizar en el mismo storage que se obtuvo
-          if (isFromLocalStorage) {
-            localStorage.setItem('user', JSON.stringify(response.data.user))
-          } else {
-            sessionStorage.setItem('user', JSON.stringify(response.data.user))
-          }
+          localStorage.setItem('user', JSON.stringify(response.data.user))
         } catch (serverError) {
           // Si no hay servidor disponible, usar datos locales
           console.warn('Servidor no disponible, usando datos locales:', serverError.message)
         }
       } catch (err) {
-        console.warn('Error al parsear datos locales, limpiando autenticación:', err)
+        console.warn('Error inesperado al restaurar sesión:', err)
         await clearAuthData(false) // No es logout manual
       }
     } else {
@@ -320,17 +306,10 @@ export const useAuthStore = defineStore('auth', () => {
       tokenExpiresAt.value = expires_at
       tokenExpiresIn.value = expires_in
 
-      // Actualizar storage
-      const isFromLocalStorage = localStorage.getItem('auth_token')
-      if (isFromLocalStorage) {
-        localStorage.setItem('auth_token', newToken)
-        localStorage.setItem('token_expires_at', expires_at)
-        localStorage.setItem('user', JSON.stringify(userData))
-      } else {
-        sessionStorage.setItem('auth_token', newToken)
-        sessionStorage.setItem('token_expires_at', expires_at)
-        sessionStorage.setItem('user', JSON.stringify(userData))
-      }
+      // Actualizar localStorage
+      localStorage.setItem('auth_token', newToken)
+      localStorage.setItem('token_expires_at', expires_at)
+      localStorage.setItem('user', JSON.stringify(userData))
 
       console.info('Token renovado exitosamente')
       return true
@@ -373,7 +352,6 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     loading,
     error,
-    rememberMe,
 
     // Getters
     currentUser,

@@ -49,7 +49,7 @@ class AuthController extends Controller
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:6|confirmed',
                 'password_confirmation' => 'required|string|min:6',
-                'last_name' => 'required|string|max:255',
+                'last_name' => 'nullable|string|max:255',
                 'phone' => 'nullable|string|max:20|unique:users',
             ]);
 
@@ -58,7 +58,10 @@ class AuthController extends Controller
                     'email' => $request->email,
                     'errors' => $validator->errors()->toArray()
                 ]);
-                return response()->json($validator->errors(), 400);
+                return response()->json([
+                    'message' => 'The given data was invalid.',
+                    'errors' => $validator->errors()
+                ], 422);
             }
 
             $user = User::create(
@@ -76,13 +79,11 @@ class AuthController extends Controller
                 'email' => $user->email
             ]);
 
-            $nuevaCuenta = UsuarioCuenta::create(
-                [
-                    'user_id' => $user->id,
-                    'id_medio_pago' => null,
-                    'configuraciones' => json_encode(['lat' => '19.432608', 'lng' => '-99.133209']),
-                ]
-            );
+            // Crear la cuenta del usuario
+            $nuevaCuenta = new UsuarioCuenta();
+            $nuevaCuenta->user_id = $user->id;
+            $nuevaCuenta->configuraciones = ['lat' => '19.432608', 'lng' => '-99.133209'];
+            $nuevaCuenta->save();
 
             \Log::info("💳 Cuenta de usuario creada exitosamente", [
                 'user_id' => $user->id,
@@ -102,11 +103,17 @@ class AuthController extends Controller
             ]);
 
             return response()->json([
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
                 'access_token' => $token,
+                'token' => $token, // Para compatibilidad
                 'token_type' => 'Bearer',
                 'expires_at' => $expiresAt->toISOString(),
                 'expires_in' => config('sanctum.expiration') * 60, // en segundos
-            ]);
+            ], 201);
 
         } catch (\Exception $e) {
             \Log::error("❌ Error en registro de usuario", [
@@ -138,7 +145,7 @@ class AuthController extends Controller
                     'email' => $request->email,
                     'ip' => $request->ip()
                 ]);
-                return response()->json(['message' => 'Unauthorized'], 401);
+                return response()->json(['error' => 'Credenciales inválidas'], 401);
             }
 
             $user = User::where('email', $request->email)->firstOrFail();
@@ -160,13 +167,17 @@ class AuthController extends Controller
             ]);
 
             return response()->json([
-                'success' => true,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
                 'access_token' => $token,
+                'token' => $token, // Para compatibilidad
                 'token_type' => 'Bearer',
                 'expires_at' => $expiresAt->toISOString(),
                 'expires_in' => config('sanctum.expiration') * 60, // en segundos
-                'user' => $user
-            ]);
+            ], 200);
 
         } catch (\Exception $e) {
             \Log::error("❌ Error en login", [

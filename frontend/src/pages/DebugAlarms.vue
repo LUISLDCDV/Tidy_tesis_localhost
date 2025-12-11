@@ -91,11 +91,50 @@
       </q-card-section>
     </q-card>
 
+    <!-- Historial de Ejecuciones de Alarmas -->
+    <q-card class="q-mb-md">
+      <q-card-section class="bg-teal text-white">
+        <div class="row items-center">
+          <div class="text-h6 col">📜 Historial de Ejecuciones</div>
+          <q-btn flat dense icon="refresh" @click="loadAlarmLogs" label="Actualizar" color="white" class="q-mr-sm" />
+          <q-btn flat dense icon="clear_all" @click="clearAlarmHistory" label="Limpiar" color="white" />
+        </div>
+      </q-card-section>
+      <q-card-section class="q-pt-none" style="max-height: 400px; overflow-y: auto;">
+        <div v-if="alarmHistory.length > 0">
+          <div
+            v-for="(alarm, index) in alarmHistory"
+            :key="index"
+            class="q-mb-sm q-pa-md rounded-borders bg-teal-1"
+          >
+            <div class="row items-center q-mb-xs">
+              <q-icon name="alarm" size="sm" class="q-mr-sm" color="teal" />
+              <span class="text-bold">{{ alarm.title }}</span>
+              <q-space />
+              <q-chip size="sm" color="teal" text-color="white">ID: {{ alarm.alarmId }}</q-chip>
+            </div>
+            <div class="text-caption text-grey-7 q-mb-xs">{{ alarm.message }}</div>
+            <div class="text-caption">
+              <strong>Ejecutada:</strong> {{ alarm.executionDate }}
+            </div>
+            <div class="text-caption">
+              <strong>Programada para:</strong> {{ alarm.triggerDate }}
+            </div>
+          </div>
+        </div>
+        <div v-else class="text-grey text-center q-pa-lg">
+          <q-icon name="history" size="48px" class="q-mb-sm" />
+          <div>No hay ejecuciones registradas</div>
+          <div class="text-caption">Las alarmas que se ejecuten aparecerán aquí</div>
+        </div>
+      </q-card-section>
+    </q-card>
+
     <!-- Logs -->
     <q-card>
       <q-card-section class="bg-grey-8 text-white">
         <div class="row items-center">
-          <div class="text-h6 col">📋 Logs</div>
+          <div class="text-h6 col">📋 Logs de Pruebas</div>
           <q-btn flat dense icon="clear" @click="logs = []" label="Limpiar" color="white" />
         </div>
       </q-card-section>
@@ -147,6 +186,7 @@ const isAndroid = ref(false)
 const availablePlugins = ref([])
 const logs = ref([])
 const testingAlarm = ref(false)
+const alarmHistory = ref([])
 
 const addLog = (message, type = 'info') => {
   const time = new Date().toLocaleTimeString()
@@ -164,6 +204,7 @@ onMounted(() => {
   addLog(`Android: ${isAndroid.value}`)
 
   checkPlugins()
+  loadAlarmLogs()
 })
 
 const checkPlugins = async () => {
@@ -360,6 +401,71 @@ const requestBatteryExemption = async () => {
 
   } catch (error) {
     addLog(`❌ Error: ${error.message}`, 'error')
+    $q.notify({
+      type: 'negative',
+      message: `Error: ${error.message}`,
+      position: 'top'
+    })
+  }
+}
+
+const loadAlarmLogs = async () => {
+  addLog('📜 Cargando historial de alarmas...')
+
+  try {
+    if (!window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.AlarmPlugin) {
+      addLog('❌ AlarmPlugin no disponible', 'error')
+      return
+    }
+
+    const AlarmPlugin = window.Capacitor.Plugins.AlarmPlugin
+    const result = await AlarmPlugin.getAlarmLogs()
+
+    if (result.success) {
+      const logs = JSON.parse(result.logs)
+      alarmHistory.value = logs
+      addLog(`✅ Historial cargado: ${result.count} ejecuciones`, 'success')
+
+      $q.notify({
+        type: 'positive',
+        message: `Historial cargado: ${result.count} alarmas`,
+        position: 'top'
+      })
+    }
+  } catch (error) {
+    addLog(`❌ Error al cargar historial: ${error.message}`, 'error')
+    $q.notify({
+      type: 'negative',
+      message: `Error: ${error.message}`,
+      position: 'top'
+    })
+  }
+}
+
+const clearAlarmHistory = async () => {
+  addLog('🗑️ Limpiando historial de alarmas...')
+
+  try {
+    if (!window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.AlarmPlugin) {
+      addLog('❌ AlarmPlugin no disponible', 'error')
+      return
+    }
+
+    const AlarmPlugin = window.Capacitor.Plugins.AlarmPlugin
+    const result = await AlarmPlugin.clearAlarmLogs()
+
+    if (result.success) {
+      alarmHistory.value = []
+      addLog('✅ Historial limpiado', 'success')
+
+      $q.notify({
+        type: 'positive',
+        message: 'Historial de alarmas limpiado',
+        position: 'top'
+      })
+    }
+  } catch (error) {
+    addLog(`❌ Error al limpiar historial: ${error.message}`, 'error')
     $q.notify({
       type: 'negative',
       message: `Error: ${error.message}`,

@@ -8,10 +8,17 @@ use App\Models\User;
 use App\Models\UsuarioCuenta;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tests\Traits\SeedsTiposNotas;
 
 class NotaTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, SeedsTiposNotas;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seedTiposNotas();
+    }
 
     /** @test */
     public function it_can_create_a_note()

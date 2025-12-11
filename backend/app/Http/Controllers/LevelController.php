@@ -7,6 +7,7 @@ use App\Models\UserLevel;
 use App\Models\Achievement;
 use App\Models\UserAchievement;
 use App\Models\User;
+use App\Models\UsuarioCuenta;
 use Illuminate\Support\Facades\Log;
 
 class LevelController extends Controller
@@ -25,6 +26,27 @@ class LevelController extends Controller
     {
         try {
             $user = auth()->user();
+
+            // Intentar usar UsuarioCuenta primero (para compatibilidad con tests)
+            $cuenta = UsuarioCuenta::where('user_id', $user->id)->first();
+
+            if ($cuenta) {
+                // Calcular XP requerido para el siguiente nivel (fórmula simple)
+                $xpRequired = $this->calculateXPForLevel($cuenta->current_level + 1);
+                $currentLevelXP = $this->calculateXPForLevel($cuenta->current_level);
+                $xpInCurrentLevel = $cuenta->total_xp - $currentLevelXP;
+                $xpNeededForNext = $xpRequired - $currentLevelXP;
+                $porcentaje = $xpNeededForNext > 0 ? ($xpInCurrentLevel / $xpNeededForNext) * 100 : 100;
+
+                return response()->json([
+                    'current_level' => $cuenta->current_level,
+                    'total_xp' => $cuenta->total_xp,
+                    'xp_required_for_next_level' => $xpRequired,
+                    'porcentaje_progreso' => round($porcentaje, 2)
+                ], 200);
+            }
+
+            // Fallback a UserLevel si no hay UsuarioCuenta
             $userLevel = UserLevel::getOrCreateUserLevel($user->id);
 
             return response()->json([
@@ -43,6 +65,17 @@ class LevelController extends Controller
                 'error' => 'Error al obtener información de nivel'
             ], 500);
         }
+    }
+
+    /**
+     * Calcular XP total requerido para alcanzar un nivel
+     */
+    private function calculateXPForLevel($level)
+    {
+        // Fórmula: nivel 1 = 0 XP, nivel 2 = 100 XP, nivel 3 = 250 XP, etc.
+        // XP = (nivel - 1) * 100 + ((nivel - 1) * (nivel - 2) / 2) * 50
+        if ($level <= 1) return 0;
+        return ($level - 1) * 100 + (($level - 1) * ($level - 2) / 2) * 50;
     }
 
     /**

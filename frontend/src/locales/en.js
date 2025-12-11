@@ -19,8 +19,8 @@ export default {
         description: 'Create different types of notes: simple, recipes, shopping lists and more. Organize your information in a practical way.'
       },
       alarmsReminders: {
-        title: 'Alarms and Reminders',
-        description: 'Configure alarms with geolocation and personalized notifications. Never forget an important task.'
+        title: 'Custom Alarms',
+        description: 'Configure alarms and personalized notifications. Never forget an important task.'
       },
       objectivesGoals: {
         title: 'Objectives and Goals',

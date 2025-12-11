@@ -603,6 +603,7 @@ export default {
       
       try {
         console.log('Calendario seleccionado:', calendario);
+        // TODO: Implementar selección de calendario con Pinia
         this.$q.notify({
           type: 'positive',
           message: `Calendario "${calendario.nombre}" seleccionado`,
@@ -992,13 +993,8 @@ export default {
       console.log('🗑️ handleDelete - eventId recibido:', eventId);
       console.log('🗑️ handleDelete - elemento_id:', eventId.elemento_id);
 
-      const confirmed = await useConfirm('¿Estás seguro de eliminar este evento?');
-      if (!confirmed) {
-        console.log('❌ handleDelete - Usuario canceló eliminación');
-        return;
-      }
-
-      console.log('✅ handleDelete - Usuario confirmó eliminación');
+      // Nota: La confirmación ya fue pedida por EventFormModal, no pedir doble confirmación
+      console.log('✅ handleDelete - Confirmación recibida desde EventFormModal');
 
       try {
         // Buscar el evento antes de eliminarlo para las notificaciones

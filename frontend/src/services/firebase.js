@@ -363,23 +363,51 @@ class FirebaseService {
   // ===========================================
 
   /**
-   * Login con Google Firebase
+   * Login con Google - Detecta automáticamente si es web o app nativa
    */
   async loginWithGoogle() {
     try {
-      const result = await signInWithPopup(this.auth, googleProvider);
-      const user = result.user;
+      // Detectar si estamos en Capacitor (app nativa)
+      const isNative = window.Capacitor?.isNativePlatform();
 
-      this.authUser = {
-        uid: user.uid,
-        email: user.email,
-        name: user.displayName,
-        photo: user.photoURL,
-        token: await user.getIdToken()
-      };
+      if (isNative) {
+        // Usar plugin de Capacitor para apps nativas
+        console.log('Usando Capacitor GoogleAuth para app nativa');
+        const { GoogleAuth } = await import('@codetrix-studio/capacitor-google-auth');
 
-      console.log('Login con Google exitoso:', this.authUser);
-      return this.authUser;
+        // Inicializar GoogleAuth
+        await GoogleAuth.initialize();
+
+        // Hacer login
+        const googleUser = await GoogleAuth.signIn();
+
+        this.authUser = {
+          uid: googleUser.id,
+          email: googleUser.email,
+          name: googleUser.name,
+          photo: googleUser.imageUrl,
+          token: googleUser.authentication.idToken
+        };
+
+        console.log('Login con Google (Capacitor) exitoso:', this.authUser);
+        return this.authUser;
+      } else {
+        // Usar Firebase para web
+        console.log('Usando Firebase signInWithPopup para web');
+        const result = await signInWithPopup(this.auth, googleProvider);
+        const user = result.user;
+
+        this.authUser = {
+          uid: user.uid,
+          email: user.email,
+          name: user.displayName,
+          photo: user.photoURL,
+          token: await user.getIdToken()
+        };
+
+        console.log('Login con Google (Firebase) exitoso:', this.authUser);
+        return this.authUser;
+      }
     } catch (error) {
       console.error('Error en login con Google:', error);
       throw new Error(error.message);

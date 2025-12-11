@@ -101,13 +101,13 @@
             <p>Hola {{ $user->name }},</p>
 
             <div class="test-info">
-                <h3 style="margin-top: 0; color: #2c3e50;">📧 Sistema de Email Funcionando</h3>
+                <h3 style="margin-top: 0; color: #2c3e50;"><i class="fas fa-envelope"></i> Sistema de Email Funcionando</h3>
                 <p>Este es un email de prueba para verificar que el sistema de notificaciones por correo electrónico de <strong>Tidy</strong> está funcionando correctamente.</p>
-                <div class="success-badge">✅ Test Exitoso</div>
+                <div class="success-badge"><i class="fas fa-check-circle"></i> Test Exitoso</div>
             </div>
 
             <div class="test-details">
-                <h4 style="margin-top: 0; color: #007bff;">📊 Detalles de la Prueba</h4>
+                <h4 style="margin-top: 0; color: #007bff;"><i class="fas fa-chart-bar"></i> Detalles de la Prueba</h4>
                 <table>
                     <tr>
                         <td><strong>Usuario de Prueba:</strong></td>
@@ -136,10 +136,10 @@
 
             <p>Si has recibido este email, significa que:</p>
             <ul>
-                <li>✅ La configuración de email está funcionando correctamente</li>
-                <li>✅ El servidor puede enviar notificaciones</li>
-                <li>✅ Tu dirección de email está configurada apropiadamente</li>
-                <li>✅ Los templates de email se renderizan correctamente</li>
+                <li><i class="fas fa-check-circle"></i> La configuración de email está funcionando correctamente</li>
+                <li><i class="fas fa-check-circle"></i> El servidor puede enviar notificaciones</li>
+                <li><i class="fas fa-check-circle"></i> Tu dirección de email está configurada apropiadamente</li>
+                <li><i class="fas fa-check-circle"></i> Los templates de email se renderizan correctamente</li>
             </ul>
 
             <p style="color: #6c757d; font-size: 14px; text-align: center;">

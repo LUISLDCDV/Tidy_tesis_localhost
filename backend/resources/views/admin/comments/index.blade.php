@@ -154,7 +154,7 @@
     <!-- Lista de Comentarios -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">
+            <h6 class="m-0 font-weight-bold text-white">
                 Comentarios ({{ $comments->total() }} total)
             </h6>
         </div>

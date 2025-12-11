@@ -95,13 +95,13 @@
 
         <div class="content">
             <div class="achievement-icon">
-                🏆
+                <i class="fas fa-trophy"></i>
             </div>
 
             <p>¡Increíble! Has alcanzado el <strong>Nivel {{ $level }}</strong> en Tidy. Tu dedicación y constancia han dado frutos.</p>
 
             <div class="stats">
-                <h3 style="margin-top: 0; color: #2c3e50;">📊 Tus Estadísticas</h3>
+                <h3 style="margin-top: 0; color: #2c3e50;"><i class="fas fa-chart-bar"></i> Tus Estadísticas</h3>
                 <div class="stat-item">
                     <span><strong>Nuevo Nivel:</strong></span>
                     <span style="color: #667eea; font-weight: 700;">{{ $level }}</span>
@@ -120,7 +120,7 @@
 
             <div style="text-align: center;">
                 <a href="https://tidy-t.web.app" class="cta-button">
-                    🚀 Continuar en Tidy
+                    <i class="fas fa-rocket"></i> Continuar en Tidy
                 </a>
             </div>
 

@@ -13,7 +13,7 @@
       <q-toolbar-title class="text-weight-bold">
         <q-img
           :src="currentLogo"
-          style="width: 120px; height: auto; max-height: 40px;"
+          style="width: 120px; height: auto; max-height: 40px; border-radius: 12px;"
           class="q-mr-sm logo-header"
           no-spinner
           no-transition

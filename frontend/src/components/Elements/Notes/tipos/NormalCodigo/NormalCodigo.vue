@@ -8,6 +8,8 @@
 </template>
 
 <script>
+// TODO: FINALIZAR EL COMPONENTE DE EDITOR DE CODIGO
+// TODO: Error cargar y guarda 
 
 import WysiwygEditor from './components/WysiwygEditor.vue';
 import BackButton from '@/components/Nav/BackButton.vue';

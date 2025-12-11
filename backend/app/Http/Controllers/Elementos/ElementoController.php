@@ -352,19 +352,43 @@ class ElementoController extends Controller
 
         $Cuenta = UsuarioCuenta::where('user_id', $usuario->id)->first();
 
-        // Obtener el elemento primero (solo si no está eliminado)
+        // LOG: Debug información de búsqueda
+        \Log::info("🔍 Buscando elemento para eliminar", [
+            'elemento_id' => $id,
+            'cuenta_id' => $Cuenta->id,
+            'user_id' => $usuario->id
+        ]);
+
+        // Verificar si el elemento existe sin filtros
+        $elementoSinFiltros = Elemento::where('id', $id)->first();
+        if ($elementoSinFiltros) {
+            \Log::info("✅ Elemento existe en BD", [
+                'elemento_id' => $elementoSinFiltros->id,
+                'cuenta_id' => $elementoSinFiltros->cuenta_id,
+                'tipo' => $elementoSinFiltros->tipo,
+                'deleted_at' => $elementoSinFiltros->deleted_at
+            ]);
+        } else {
+            \Log::warning("❌ Elemento no existe en BD con ID: {$id}");
+        }
+
+        // Obtener el elemento (SoftDeletes lo filtra automáticamente)
         $elemento = Elemento::where('cuenta_id', $Cuenta->id)
             ->where('id', $id)
-            ->whereNull('deleted_at')
             ->first();
 
         if (!$elemento) {
+            \Log::error("❌ Elemento no encontrado con filtros", [
+                'elemento_id' => $id,
+                'cuenta_id_buscada' => $Cuenta->id,
+                'elemento_cuenta_id' => $elementoSinFiltros ? $elementoSinFiltros->cuenta_id : 'N/A',
+                'elemento_deleted_at' => $elementoSinFiltros ? $elementoSinFiltros->deleted_at : 'N/A'
+            ]);
             return response()->json(['error' => 'Elemento no encontrado'], 404);
         }
 
-        // Marcar como eliminado
-        $elemento->deleted_at = now();
-        $elemento->save();
+        // Soft delete usando Laravel (automáticamente marca deleted_at)
+        $elemento->delete();
 
         \Log::info("Eliminando elemento", [
             'elemento_id' => $elemento->id,
@@ -373,7 +397,7 @@ class ElementoController extends Controller
         ]);
 
         switch ($elemento->tipo) {
-            
+
             case 'meta':
                 \Log::info("🗑️ Eliminando meta", [
                     'elemento_id' => $elemento->id,
@@ -381,21 +405,19 @@ class ElementoController extends Controller
                     'usuario_id' => $usuario->id
                 ]);
 
-                $metaAntes = Meta::where('elemento_id', $elemento->id)->first();
-                if ($metaAntes) {
+                $meta = Meta::where('elemento_id', $elemento->id)->first();
+                if ($meta) {
                     \Log::info("✅ Meta encontrada para eliminar", [
-                        'meta_id' => $metaAntes->id,
-                        'nombre' => $metaAntes->nombre,
-                        'status' => $metaAntes->status
+                        'meta_id' => $meta->id,
+                        'nombre' => $meta->nombre,
+                        'status' => $meta->status
                     ]);
+                    $meta->delete(); // Soft delete automático
                 }
 
-                $meta = Meta::where('elemento_id', $elemento->id)
-                ->update(['deleted_at' => now()]);
+                \Log::info("✅ Meta eliminada");
 
-                \Log::info("✅ Meta eliminada - filas afectadas: {$meta}");
-
-                return response()->json($meta);
+                return response()->json(['success' => true, 'message' => 'Meta eliminada']);
                 break;
 
             case 'objetivo':
@@ -405,12 +427,13 @@ class ElementoController extends Controller
                     return response()->json(['error' => 'Objetivo no encontrado'], 404);
                 }
 
-                // Eliminar también todas sus metas asociadas
-                Meta::where('objetivo_id', $objetivo->id)
-                    ->update(['deleted_at' => now()]);
+                // Eliminar también todas sus metas asociadas (soft delete)
+                Meta::where('objetivo_id', $objetivo->id)->get()->each(function($meta) {
+                    $meta->delete();
+                });
 
-                // Marcar el objetivo como eliminado
-                $objetivo->update(['deleted_at' => now()]);
+                // Soft delete del objetivo
+                $objetivo->delete();
 
                 \Log::info("🗑️ Objetivo eliminado exitosamente", [
                     'objetivo_id' => $objetivo->id,
@@ -419,34 +442,76 @@ class ElementoController extends Controller
                 ]);
 
                 return response()->json([
+                    'success' => true,
                     'message' => 'Objetivo eliminado exitosamente',
                     'objetivo_id' => $objetivo->id
                 ]);
                 break;
             case 'alarma':
-                $alarma = Alarma::where('elemento_id', $elemento->id)
-                ->update(['deleted_at' => now()]);
+                $alarma = Alarma::where('elemento_id', $elemento->id)->first();
+                if ($alarma) {
+                    $alarma->delete(); // Soft delete automático
+                }
 
-                return response()->json($alarma);
+                return response()->json(['success' => true, 'message' => 'Alarma eliminada']);
                 break;
             case 'nota':
-                $nota = Nota::where('elemento_id', $elemento->id)
-                ->update(['deleted_at' => now()]);
+                $nota = Nota::where('elemento_id', $elemento->id)->first();
+                if ($nota) {
+                    $nota->delete(); // Soft delete automático
+                }
 
-                return response()->json($nota);
+                return response()->json(['success' => true, 'message' => 'Nota eliminada']);
                 break;
             case 'calendario':
-                $calendario = Calendario::where('elemento_id', $elemento->id)
-                ->update(['deleted_at' => now()]);
+                $calendario = Calendario::where('elemento_id', $elemento->id)->first();
+                if (!$calendario) {
+                    return response()->json(['error' => 'Calendario no encontrado'], 404);
+                }
 
-                return response()->json($calendario);
+                \Log::info("🗑️ Eliminando calendario y sus eventos", [
+                    'calendario_id' => $calendario->id,
+                    'elemento_id' => $elemento->id,
+                    'usuario_id' => $usuario->id
+                ]);
+
+                // Eliminar todos los eventos asociados al calendario
+                $eventos = Evento::where('calendario_id', $calendario->id)->get();
+                $eventosEliminados = 0;
+
+                foreach ($eventos as $evento) {
+                    // Eliminar también el elemento padre de cada evento
+                    if ($evento->elemento_id) {
+                        $elementoEvento = Elemento::find($evento->elemento_id);
+                        if ($elementoEvento) {
+                            $elementoEvento->delete();
+                        }
+                    }
+                    $evento->delete();
+                    $eventosEliminados++;
+                }
+
+                \Log::info("✅ Eventos eliminados: {$eventosEliminados}");
+
+                // Soft delete del calendario
+                $calendario->delete();
+
+                \Log::info("✅ Calendario eliminado exitosamente");
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Calendario eliminado exitosamente',
+                    'eventos_eliminados' => $eventosEliminados
+                ]);
                 break;
 
             case 'evento':
-                $evento = Evento::where('elemento_id', $elemento->id)
-                ->update(['deleted_at' => now()]);
+                $evento = Evento::where('elemento_id', $elemento->id)->first();
+                if ($evento) {
+                    $evento->delete(); // Soft delete automático
+                }
 
-                return response()->json($evento);                 
+                return response()->json(['success' => true, 'message' => 'Evento eliminado']);
                 break;
 
             default:
@@ -568,5 +633,48 @@ class ElementoController extends Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Listar todos los elementos del usuario (API RESTful)
+     */
+    public function index(Request $request)
+    {
+        try {
+            $usuario = auth()->user();
+
+            if (!$usuario) {
+                return response()->json(['error' => 'Usuario no autenticado'], 401);
+            }
+
+            $cuenta = UsuarioCuenta::where('user_id', $usuario->id)->first();
+
+            if (!$cuenta) {
+                return response()->json(['error' => 'Cuenta no encontrada'], 404);
+            }
+
+            $query = Elemento::where('cuenta_id', $cuenta->id);
+
+            // Filtro por búsqueda
+            if ($request->has('search')) {
+                $search = $request->input('search');
+                $query->where('descripcion', 'like', "%{$search}%");
+            }
+
+            // Filtro por tipo
+            if ($request->has('tipo')) {
+                $query->where('tipo', $request->input('tipo'));
+            }
+
+            $elementos = $query->orderBy('orden', 'asc')->get();
+
+            return response()->json(['data' => $elementos], 200);
+        } catch (\Exception $e) {
+            \Log::error("❌ Error obteniendo elementos", [
+                'user_id' => auth()->id(),
+                'error' => $e->getMessage()
+            ]);
+            return response()->json(['error' => 'Error obteniendo elementos'], 500);
+        }
     }
 }

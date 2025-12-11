@@ -33,6 +33,7 @@ class ApiUsuarioController extends Controller
 
         return response()->json([
             'user' => $userData,
+            'cuenta' => $cuenta,
         ]);
     }
 

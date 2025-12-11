@@ -1319,6 +1319,12 @@ export default {
   },
 
   async created() {
+    // IMPORTANTE: Cargar tema ANTES de que se renderice el componente
+    // para evitar el parpadeo de modo oscuro
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    this.$q.dark.set(savedDarkMode);
+    this.darkModeLocal = savedDarkMode;
+
     // Inicializar store de configuraciones de usuario
     try {
       await this.userSettingsStore.initializeSettings();

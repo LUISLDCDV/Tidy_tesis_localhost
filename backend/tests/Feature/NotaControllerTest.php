@@ -10,10 +10,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Tests\Traits\SeedsTiposNotas;
 
 class NotaControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker, SeedsTiposNotas;
 
     protected $user;
     protected $cuenta;
@@ -21,6 +22,8 @@ class NotaControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->seedTiposNotas();
 
         $this->user = User::factory()->create();
         $this->cuenta = UsuarioCuenta::factory()->create(['user_id' => $this->user->id]);
@@ -329,7 +332,8 @@ class NotaControllerTest extends TestCase
     /** @test */
     public function it_requires_authentication()
     {
-        Sanctum::actingAs(null);
+        // Create a fresh test instance without authentication
+        $this->refreshApplication();
 
         $response = $this->getJson('/api/notes');
 

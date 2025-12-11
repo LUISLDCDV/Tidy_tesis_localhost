@@ -5,7 +5,7 @@
       <div class="logo-brand-container row items-center justify-center q-py-md">
         <q-img
           :src="currentLogo"
-          style="width: 150px; height: auto; max-height: 50px; cursor: pointer;"
+          style="width: 150px; height: auto; max-height: 50px; cursor: pointer; border-radius: 12px;"
           @click="navigateTo('/Home')"
           class="logo-mobile"
           fit="contain"
@@ -19,7 +19,8 @@
           flat
           round
           :icon="item.icon"
-          :color="isCurrentRoute(item.route) ? 'white' : (isDarkMode ? 'grey-7' : 'white')"
+          :color="isCurrentRoute(item.route) ? 'white' : 'grey-5'"
+          :style="isCurrentRoute(item.route) ? 'opacity: 1; background: rgba(255,255,255,0.2);' : 'opacity: 0.6;'"
           class="nav-icon-btn q-mx-xs"
           @click="navigateTo(item.route)"
         >
@@ -469,6 +470,13 @@ export default {
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   border: 1px solid #e5e7eb;
+}
+
+/* Position user menu more to the right on mobile */
+@media (max-width: 1023px) {
+  .user-menu {
+    transform: translateX(20px);
+  }
 }
 
 /* ========== ACTIVE STATE ANIMATIONS ========== */

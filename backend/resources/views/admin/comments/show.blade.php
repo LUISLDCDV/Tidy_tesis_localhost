@@ -42,7 +42,7 @@
         <div class="col-lg-8 mb-4">
             <div class="card shadow">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Detalles del Comentario</h6>
+                    <h6 class="m-0 font-weight-bold text-white">Detalles del Comentario</h6>
                     <div>
                         <span class="badge badge-{{ $comment->priority_color }}">{{ $comment->priority_text }}</span>
                         <span class="badge badge-secondary">{{ $comment->type_text }}</span>
@@ -169,7 +169,7 @@
             <!-- Acciones Rápidas -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Acciones Rápidas</h6>
+                    <h6 class="m-0 font-weight-bold text-white">Acciones Rápidas</h6>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">

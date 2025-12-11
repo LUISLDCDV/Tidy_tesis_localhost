@@ -89,7 +89,7 @@
 
         <div class="content">
             <div class="success-icon">
-                ✅
+                <i class="fas fa-check-circle"></i>
             </div>
 
             <p>¡Hola {{ $user->name }}!</p>
@@ -102,19 +102,19 @@
             <p>Nos alegra tenerte de vuelta. Tu cuenta está completamente funcional y puedes continuar donde lo dejaste.</p>
 
             <div class="features-list">
-                <h3 style="margin-top: 0; color: #2c3e50;">🚀 ¿Qué puedes hacer ahora?</h3>
+                <h3 style="margin-top: 0; color: #2c3e50;"><i class="fas fa-rocket"></i> ¿Qué puedes hacer ahora?</h3>
                 <ul>
                     <li>✨ Crear y gestionar tus elementos</li>
-                    <li>📊 Revisar tus estadísticas y progreso</li>
-                    <li>🏆 Continuar ganando experiencia y logros</li>
-                    <li>⚙️ Configurar tu perfil y preferencias</li>
-                    <li>📱 Sincronizar en todos tus dispositivos</li>
+                    <li><i class="fas fa-chart-bar"></i> Revisar tus estadísticas y progreso</li>
+                    <li><i class="fas fa-trophy"></i> Continuar ganando experiencia y logros</li>
+                    <li><i class="fas fa-cog"></i> Configurar tu perfil y preferencias</li>
+                    <li><i class="fas fa-mobile-alt"></i> Sincronizar en todos tus dispositivos</li>
                 </ul>
             </div>
 
             <div style="text-align: center;">
                 <a href="https://tidy-t.web.app" class="cta-button">
-                    🎯 Acceder a Tidy
+                    <i class="fas fa-bullseye"></i> Acceder a Tidy
                 </a>
             </div>
 

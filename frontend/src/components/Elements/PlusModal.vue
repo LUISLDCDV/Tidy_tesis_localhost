@@ -64,10 +64,7 @@
                   </q-item-label>
                 </q-item-section>
                 <q-item-section side>
-                  <q-icon
-                    :name="item.type === 'objective' && !objectivesStore.canCreateMoreMetas ? 'block' : 'chevron_right'"
-                    :color="item.type === 'objective' && !objectivesStore.canCreateMoreMetas ? 'warning' : undefined"
-                  />
+                  <q-icon name="chevron_right" />
                 </q-item-section>
               </q-item>
             </q-list>

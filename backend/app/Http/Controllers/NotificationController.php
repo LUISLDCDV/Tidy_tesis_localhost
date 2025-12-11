@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UsuarioCuenta;
+use App\Models\Notificacion;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 
@@ -260,6 +261,135 @@ class NotificationController extends Controller
             return response()->json([
                 'error' => 'Error al obtener configuración'
             ], 500);
+        }
+    }
+
+    /**
+     * Listar notificaciones del usuario
+     */
+    public function index(Request $request)
+    {
+        try {
+            $user = auth()->user();
+            $cuenta = UsuarioCuenta::where('user_id', $user->id)->first();
+
+            if (!$cuenta) {
+                return response()->json(['data' => []], 200);
+            }
+
+            $query = Notificacion::where('cuenta_id', $cuenta->id);
+
+            // Filtrar por tipo si se proporciona
+            if ($request->has('tipo')) {
+                $query->where('tipo', $request->tipo);
+            }
+
+            $notificaciones = $query->orderByDesc('created_at')->get();
+
+            return response()->json(['data' => $notificaciones], 200);
+        } catch (\Exception $e) {
+            Log::error('Failed to get notifications: ' . $e->getMessage());
+            return response()->json(['error' => 'Error al obtener notificaciones'], 500);
+        }
+    }
+
+    /**
+     * Obtener contador de notificaciones no leídas
+     */
+    public function unreadCount()
+    {
+        try {
+            $user = auth()->user();
+            $cuenta = UsuarioCuenta::where('user_id', $user->id)->first();
+
+            if (!$cuenta) {
+                return response()->json(['count' => 0], 200);
+            }
+
+            $count = Notificacion::where('cuenta_id', $cuenta->id)
+                ->where('leido', false)
+                ->count();
+
+            return response()->json(['count' => $count], 200);
+        } catch (\Exception $e) {
+            Log::error('Failed to get unread count: ' . $e->getMessage());
+            return response()->json(['error' => 'Error al obtener contador'], 500);
+        }
+    }
+
+    /**
+     * Marcar notificación como leída
+     */
+    public function markAsRead($id)
+    {
+        try {
+            $user = auth()->user();
+            $cuenta = UsuarioCuenta::where('user_id', $user->id)->first();
+
+            if (!$cuenta) {
+                return response()->json(['error' => 'Cuenta no encontrada'], 404);
+            }
+
+            $notificacion = Notificacion::where('id', $id)
+                ->where('cuenta_id', $cuenta->id)
+                ->firstOrFail();
+
+            $notificacion->update(['leido' => true]);
+
+            return response()->json(['message' => 'Notificación marcada como leída'], 200);
+        } catch (\Exception $e) {
+            Log::error('Failed to mark notification as read: ' . $e->getMessage());
+            return response()->json(['error' => 'Error al marcar notificación'], 500);
+        }
+    }
+
+    /**
+     * Marcar todas las notificaciones como leídas
+     */
+    public function markAllAsRead()
+    {
+        try {
+            $user = auth()->user();
+            $cuenta = UsuarioCuenta::where('user_id', $user->id)->first();
+
+            if (!$cuenta) {
+                return response()->json(['error' => 'Cuenta no encontrada'], 404);
+            }
+
+            Notificacion::where('cuenta_id', $cuenta->id)
+                ->where('leido', false)
+                ->update(['leido' => true]);
+
+            return response()->json(['message' => 'Todas las notificaciones marcadas como leídas'], 200);
+        } catch (\Exception $e) {
+            Log::error('Failed to mark all as read: ' . $e->getMessage());
+            return response()->json(['error' => 'Error al marcar notificaciones'], 500);
+        }
+    }
+
+    /**
+     * Eliminar una notificación
+     */
+    public function destroy($id)
+    {
+        try {
+            $user = auth()->user();
+            $cuenta = UsuarioCuenta::where('user_id', $user->id)->first();
+
+            if (!$cuenta) {
+                return response()->json(['error' => 'Cuenta no encontrada'], 404);
+            }
+
+            $notificacion = Notificacion::where('id', $id)
+                ->where('cuenta_id', $cuenta->id)
+                ->firstOrFail();
+
+            $notificacion->delete();
+
+            return response()->json(['message' => 'Notificación eliminada'], 200);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete notification: ' . $e->getMessage());
+            return response()->json(['error' => 'Error al eliminar notificación'], 500);
         }
     }
 }

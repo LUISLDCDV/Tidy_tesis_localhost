@@ -104,7 +104,7 @@
             <h1>
                 @if(isset($type))
                     @if($type === 'success')
-                        ✅ {{ $title ?? 'Notificación Exitosa' }}
+                        <i class="fas fa-check-circle"></i> {{ $title ?? 'Notificación Exitosa' }}
                     @elseif($type === 'warning')
                         ⚠️ {{ $title ?? 'Notificación Importante' }}
                     @elseif($type === 'error')
@@ -151,7 +151,7 @@
             @if(isset($action_url) && $action_url)
             <div style="text-align: center;">
                 <a href="{{ $action_url }}" class="cta-button">
-                    {{ $action_text ?? '🚀 Ver en Tidy' }}
+                    {{ $action_text ?? '<i class="fas fa-rocket"></i> Ver en Tidy' }}
                 </a>
             </div>
             @endif

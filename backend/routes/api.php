@@ -78,7 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // });
 });
 
-Route::middleware('auth:api')->get('/user-data', [ApiUsuarioController::class, 'getUserData']);
+Route::middleware('auth:sanctum')->get('/user-data', [ApiUsuarioController::class, 'getUserData']);
 
 // Route::get('/user-data', [AuthController::class, 'getUserData']);
 
@@ -134,19 +134,45 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     /**Notas**/
     Route::get('/usuarios/notas', [NotaController::class, 'obtenerNotasPorUsuario']);
+
+    // API RESTful para notas (usado por tests)
+    Route::apiResource('notes', NotaController::class);
+    Route::post('/notes/{id}/duplicate', [NotaController::class, 'duplicate']);
+    Route::patch('/notes/{id}/archive', [NotaController::class, 'archive']);
+    Route::patch('/notes/{id}/unarchive', [NotaController::class, 'unarchive']);
+    Route::delete('/notes/bulk', [NotaController::class, 'bulkDelete']);
+    Route::get('/note-types/available', [App\Http\Controllers\TipoNotaController::class, 'available']);
     
     /**Alarmas**/
     Route::get('/usuarios/alarmas', [AlarmaController::class, 'obtenerAlarmasPorUsuario']);
-    
+
+    // API RESTful para alarmas (usado por tests)
+    Route::apiResource('alarms', AlarmaController::class);
+    Route::patch('/alarms/{id}/toggle', [AlarmaController::class, 'toggle']);
+    Route::get('/alarms/nearby', [AlarmaController::class, 'nearby']);
+    Route::post('/alarms/check-location', [AlarmaController::class, 'checkLocation']);
+
+    /**Elementos**/
+    Route::get('/elementos', [ElementoController::class, 'index']);
+
     /**Calendario**/
     Route::get('/usuarios/calendarios', [CalendarioController::class, 'obtenerCalendariosPorUsuario']);
     Route::get('/usuarios/{idCalendario}/eventos', [EventoController::class, 'obtenerEventosPorUsuario']);
-    
+
+    // API RESTful para calendarios y eventos (usado por tests)
+    Route::apiResource('calendars', CalendarioController::class);
+    Route::apiResource('events', EventoController::class);
+
     /**Objetivos**/
     Route::get('/usuarios/objetivos', [ObjetivoController::class, 'obtenerObjetivosPorUsuario']);
     Route::get('/usuarios/{idObjetivo}/metas', [MetaController::class, 'obtenerMetasPorUsuario']);
     
     /**Notificaciones**/
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead']);
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
     Route::post('/notifications/register-device', [NotificationController::class, 'registerDeviceToken']);
     Route::post('/notifications/unregister-device', [NotificationController::class, 'unregisterDeviceToken']);
     Route::post('/notifications/test', [NotificationController::class, 'sendTestNotification']);
@@ -170,6 +196,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     /**Sistema de Niveles**/
     Route::get('/user/level', [LevelController::class, 'getUserLevel']);
+    Route::get('/level', [LevelController::class, 'getUserLevel']); // Alias para tests
     Route::get('/user/experience', [LevelController::class, 'getUserExperience']);
     Route::get('/user/achievements', [LevelController::class, 'getUserAchievements']);
     Route::get('/leaderboard', [LevelController::class, 'getLeaderboard']);

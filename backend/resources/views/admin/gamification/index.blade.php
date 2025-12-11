@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="h3 mb-0">⚙️ Configuración de Experiencia (XP)</h1>
+            <h1 class="h3 mb-0"><i class="fas fa-cog"></i> Configuración de Experiencia (XP)</h1>
             <p class="text-muted">Configura cuánta experiencia ganan los usuarios por cada acción</p>
         </div>
     </div>
@@ -81,7 +81,7 @@
                                         {{ $config->description }}
                                     </label>
                                     <div class="input-group">
-                                        <span class="input-group-text">🏆</span>
+                                        <span class="input-group-text"><i class="fas fa-trophy"></i></span>
                                         <input
                                             type="number"
                                             class="form-control"
@@ -110,7 +110,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="mb-1">💡 Recomendaciones</h6>
+                                <h6 class="mb-1"><i class="fas fa-lightbulb"></i> Recomendaciones</h6>
                                 <small class="text-muted">
                                     • Completar tareas debe dar más XP que crearlas<br>
                                     • Los objetivos son más valiosos que las notas<br>

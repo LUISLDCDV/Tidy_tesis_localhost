@@ -17,7 +17,7 @@ class ElementoGamificationObserver
         $this->gamificationService = $gamificationService;
         $this->firebaseService = null; // Disable Firebase for now
         
-        // TODO: Reactivar Firebase para notificacion proximamente
+        // TODO: Reactivar cuando Firebase esté configurado
         // try {
         //     if (class_exists('\Kreait\Firebase\Factory')) {
         //         $this->firebaseService = app(FirebaseService::class);

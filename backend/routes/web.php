@@ -26,7 +26,7 @@ Route::get('/sobre-el-proyecto', function () {
     return view('landing.about-project');
 })->name('about.project');
 
-Route::get('/documentacion-tesis', function () {
+Route::get('/tesis-docs', function () {
     return view('landing.tesis-docs');
 })->name('tesis.docs');
 
@@ -99,12 +99,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->grou
 
     Route::get('/dashboard/users', [UserManagementController::class, 'index'])->name('dashboard.users');
 
-    Route::get('/dashboard/charts', function() {
-        return view('admin.dashboard.charts', [
-            'chartsData' => null,
-            'error' => 'Charts temporarily unavailable'
-        ]);
-    })->name('dashboard.charts');
+    Route::get('/dashboard/charts', [AdminDashboardController::class, 'charts'])->name('dashboard.charts');
 
     Route::get('/dashboard/payments', [AdminDashboardController::class, 'payments'])->name('dashboard.payments');
 

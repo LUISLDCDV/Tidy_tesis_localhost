@@ -7,10 +7,11 @@ use  App\Models\Elementos\Elemento;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Calendario extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'calendarios';
     protected $primaryKey = 'id';
@@ -20,7 +21,22 @@ class Calendario extends Model
         'nombre',
         'color',
         'informacion',
+        'descripcion',
     ];
+
+    protected $appends = ['descripcion'];
+
+    // Accessor para compatibilidad con API
+    public function getDescripcionAttribute()
+    {
+        return $this->attributes['informacion'] ?? '';
+    }
+
+    // Mutator para aceptar descripcion al crear/actualizar
+    public function setDescripcionAttribute($value)
+    {
+        $this->attributes['informacion'] = $value;
+    }
 
     // Relación con Elemento
     public function elemento()

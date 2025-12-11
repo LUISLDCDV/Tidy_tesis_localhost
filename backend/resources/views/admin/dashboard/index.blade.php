@@ -40,10 +40,10 @@
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0 text-gray-800">📊 Dashboard Administrativo</h1>
-                <div class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-chart-bar"></i> Dashboard Administrativo</h1>
+                <button class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm" onclick="showComingSoonModal()">
                     <i class="fas fa-download fa-sm text-white-50"></i> Generar Reporte
-                </div>
+                </button>
             </div>
 
             @if(isset($error))
@@ -64,7 +64,7 @@
                                             Total Usuarios
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            {{ number_format($dashboardData['system_stats']['total_users']) }}
+                                            {{ number_format($dashboardData['system_stats']['total_users'] ?? 0) }}
                                         </div>
                                     </div>
                                     <div class="col-auto">
@@ -84,8 +84,8 @@
                                             Usuarios Premium
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            {{ number_format($dashboardData['system_stats']['premium_users']) }}
-                                            <small class="text-muted">({{ $dashboardData['system_stats']['premium_percentage'] }}%)</small>
+                                            {{ number_format($dashboardData['system_stats']['premium_users'] ?? 0) }}
+                                            <small class="text-muted">({{ $dashboardData['system_stats']['premium_percentage'] ?? 0 }}%)</small>
                                         </div>
                                     </div>
                                     <div class="col-auto">
@@ -105,7 +105,7 @@
                                             Activos Hoy
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            {{ number_format($dashboardData['system_stats']['active_users_today']) }}
+                                            {{ number_format($dashboardData['system_stats']['active_users_today'] ?? 0) }}
                                         </div>
                                     </div>
                                     <div class="col-auto">
@@ -125,7 +125,7 @@
                                             Total Elementos
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            {{ number_format($dashboardData['element_stats']['total_elements']) }}
+                                            {{ number_format($dashboardData['element_stats']['total_elements'] ?? 0) }}
                                         </div>
                                     </div>
                                     <div class="col-auto">
@@ -142,7 +142,9 @@
                     <div class="col-12">
                         <div class="card shadow">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">🚀 Navegación Rápida</h6>
+                                <h6 class="m-0 font-weight-bold text-white" style="background: linear-gradient(135deg,rgb(16, 116, 25) 0%,rgb(45, 158, 149) 100%); margin: -12px; padding: 12px; border-radius: 12px 12px 0 0;">
+                                    <i class="fas fa-rocket"></i> Navegación Rápida
+                                </h6>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -182,8 +184,10 @@
                     <div class="col-lg-6">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                                <h6 class="m-0 font-weight-bold text-primary">👥 Administradores del Sistema</h6>
-                                <a href="{{ route('usuarios.index', Auth::user()->id) }}" class="btn btn-sm btn-outline-primary">
+                                <h6 class="m-0 font-weight-bold text-white">
+                                    <i class="fas fa-users-cog"></i> Administradores del Sistema
+                                </h6>
+                                <a href="{{ route('usuarios.index', Auth::user()->id) }}" class="btn btn-sm btn-outline-light">
                                     Ver Todos
                                 </a>
                             </div>
@@ -193,8 +197,8 @@
                                         <table class="table table-borderless">
                                             <thead class="small text-uppercase text-muted">
                                                 <tr>
-                                                    <th>Usuario</th>
-                                                    <th>Estado</th>
+                                                    <th>Nombre</th>
+                                                    <th>Email</th>
                                                     <th>Actividad</th>
                                                 </tr>
                                             </thead>
@@ -214,31 +218,11 @@
                                                                         </div>
                                                                     @endif
                                                                 </div>
-                                                                <div>
-                                                                    <div class="font-weight-bold">{{ $user['name'] }}</div>
-                                                                    <div class="small text-muted">{{ $user['email'] }}</div>
-                                                                </div>
+                                                                <div class="font-weight-bold">{{ $user['name'] }}</div>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <div class="d-flex flex-column">
-                                                                @if($user['premium'])
-                                                                    <span class="badge badge-warning mb-1">
-                                                                        <i class="fas fa-star"></i> Premium
-                                                                    </span>
-                                                                    @if($user['premium_expires'])
-                                                                        <small class="text-muted">Hasta: {{ $user['premium_expires'] }}</small>
-                                                                    @endif
-                                                                @else
-                                                                    <span class="badge badge-light">Gratuito</span>
-                                                                @endif
-                                                                <div class="mt-1">
-                                                                    <span class="badge badge-info">
-                                                                        <i class="fas fa-trophy"></i> Nivel {{ $user['level'] }}
-                                                                    </span>
-                                                                    <small class="text-muted ml-1">{{ number_format($user['total_xp']) }} XP</small>
-                                                                </div>
-                                                            </div>
+                                                            <div class="small text-muted">{{ $user['email'] }}</div>
                                                         </td>
                                                         <td>
                                                             <div class="small text-success">
@@ -264,8 +248,10 @@
                     <div class="col-lg-6">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                                <h6 class="m-0 font-weight-bold text-success">📝 Estadísticas de Elementos</h6>
-                                <a href="{{ route('admin.dashboard.charts') }}" class="btn btn-sm btn-outline-success">
+                                <h6 class="m-0 font-weight-bold text-white">
+                                    <i class="fas fa-chart-pie"></i> Estadísticas de Elementos
+                                </h6>
+                                <a href="{{ route('admin.dashboard.charts') }}" class="btn btn-sm btn-outline-light">
                                     Ver Gráficos
                                 </a>
                             </div>
@@ -318,7 +304,7 @@
 
             @else
                 <div class="alert alert-info" role="alert">
-                    <h4 class="alert-heading">📊 Dashboard no disponible</h4>
+                    <h4 class="alert-heading"><i class="fas fa-chart-bar"></i> Dashboard no disponible</h4>
                     <p>No se pudieron cargar los datos del dashboard. Esto puede deberse a:</p>
                     <ul>
                         <li>Base de datos no disponible</li>

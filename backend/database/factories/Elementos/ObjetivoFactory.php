@@ -12,8 +12,8 @@ class ObjetivoFactory extends Factory
     public function definition()
     {
         return [
+            'elemento_id' => \App\Models\Elementos\Elemento::factory(),
             'tipo' => $this->faker->randomElement(['personal', 'profesional', 'otro']),
-            'elemento_id' => null, // O usa \App\Models\Elementos\Elemento::factory()
             'fechaCreacion' => $this->faker->date(),
             'fechaVencimiento' => $this->faker->optional()->date(),
             'nombre' => $this->faker->words(3, true),

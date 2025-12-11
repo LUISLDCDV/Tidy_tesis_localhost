@@ -314,7 +314,8 @@ class AlarmaControllerTest extends TestCase
     /** @test */
     public function it_requires_authentication()
     {
-        Sanctum::actingAs(null);
+        // Limpiar la autenticación
+        $this->app['auth']->forgetGuards();
 
         $response = $this->getJson('/api/alarms');
 

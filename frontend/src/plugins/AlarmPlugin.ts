@@ -35,6 +35,14 @@ export interface AlarmPluginInterface {
    * @returns Promise que resuelve cuando se abre la configuración
    */
   openExactAlarmSettings(): Promise<{ success: boolean; message?: string }>;
+
+  /**
+   * Programa una alarma de prueba que suena en 3 segundos.
+   * Útil para verificar que el sistema de alarmas funciona correctamente.
+   *
+   * @returns Promise que resuelve con información de la alarma programada
+   */
+  testAlarmNow(): Promise<{ success: boolean; alarmId: number; scheduledFor: string; message: string; triggerTime: number }>;
 }
 
 const AlarmPlugin = registerPlugin<AlarmPluginInterface>('AlarmPlugin', {
@@ -54,6 +62,10 @@ const AlarmPlugin = registerPlugin<AlarmPluginInterface>('AlarmPlugin', {
       },
       openExactAlarmSettings: async () => {
         return { success: false, message: 'No disponible en web' };
+      },
+      testAlarmNow: async () => {
+        console.warn('AlarmPlugin no está disponible en web');
+        return { success: false, alarmId: 0, scheduledFor: '', message: 'No disponible en web', triggerTime: 0 };
       }
     };
   }

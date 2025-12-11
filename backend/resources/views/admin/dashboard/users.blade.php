@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">👥 Gestión de Usuarios</h1>
+                <h1 class="h3 mb-0" style="color: #2c3e50; "><i class="fas fa-users"></i> Gestión de Usuarios</h1>
                 <a href="{{ route('home') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Volver al Dashboard
                 </a>
@@ -23,7 +23,7 @@
                 <!-- Filtros de búsqueda -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold" style="color: #1976D2; font-family: 'Google Sans Text', sans-serif;">🔍 Filtros de Búsqueda</h6>
+                        <h6 class="m-0 font-weight-bold" style="color: #1976D2; "><i class="fas fa-search"></i> Filtros de Búsqueda</h6>
                     </div>
                     <div class="card-body">
                         <form method="GET" action="{{ route('admin.dashboard.users') }}">
@@ -84,8 +84,8 @@
                 <!-- Tabla de usuarios -->
                 <div class="card shadow">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold" style="color: #1976D2; font-family: 'Google Sans Text', sans-serif;">
-                            📋 Lista de Usuarios ({{ $usersData['total'] ?? 0 }} total)
+                        <h6 class="m-0 font-weight-bold" style="color: #1976D2; ">
+                            <i class="fas fa-clipboard-list"></i> Lista de Usuarios ({{ $usersData['total'] ?? 0 }} total)
                         </h6>
                     </div>
                     <div class="card-body">
@@ -95,11 +95,10 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Usuario</th>
+                                            <th>Nombre</th>
                                             <th>Email</th>
                                             <th>Nivel</th>
                                             <th>XP Total</th>
-                                            <th>Premium</th>
                                             <th>Registro</th>
                                             <th>Acciones</th>
                                         </tr>
@@ -134,7 +133,7 @@
                                                 <td>
                                                     @if(isset($user['cuenta']) && $user['cuenta']->is_premium)
                                                         <span class="badge bg-warning text-dark rounded-pill">
-                                                            👑 Premium
+                                                            <i class="fas fa-crown"></i> Premium
                                                         </span>
                                                         @if($user['cuenta']->premium_expires_at)
                                                             <br><small class="text-muted">Hasta {{ \Carbon\Carbon::parse($user['cuenta']->premium_expires_at)->format('d/m/Y') }}</small>
@@ -227,7 +226,7 @@
 
             @else
                 <div class="alert alert-info" role="alert">
-                    <h4 class="alert-heading">👥 Gestión de usuarios no disponible</h4>
+                    <h4 class="alert-heading"><i class="fas fa-users"></i> Gestión de usuarios no disponible</h4>
                     <p>No se pudieron cargar los datos de usuarios.</p>
                 </div>
             @endif
@@ -242,23 +241,23 @@
             <form id="editExperienceForm" method="POST">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">
+                    <h5 class="modal-title" style="color: #2c3e50; ">
                         🪙 Editar Experiencia
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="userNameDisplay" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Usuario:</label>
+                        <label for="userNameDisplay" style="color: #2c3e50; ">Usuario:</label>
                         <input type="text" id="userNameDisplay" class="form-control" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="experience" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Nueva experiencia (XP):</label>
+                        <label for="experience" style="color: #2c3e50; ">Nueva experiencia (XP):</label>
                         <input type="number" name="experience" id="experience" class="form-control" min="0" max="757500" required>
                         <small class="form-text text-muted">El nivel se calculará automáticamente (máx: 757,500 XP)</small>
                     </div>
                     <div class="form-group">
-                        <label for="reason" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Razón del cambio (opcional):</label>
+                        <label for="reason" style="color: #2c3e50; ">Razón del cambio (opcional):</label>
                         <input type="text" name="reason" id="reason" class="form-control" maxlength="255"
                                placeholder="Ej: Corrección por error, bonificación especial...">
                     </div>
@@ -281,28 +280,28 @@
             <form id="sendNotificationForm" method="POST">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">
-                        🔔 Enviar Notificación
+                    <h5 class="modal-title" style="color: #2c3e50; ">
+                        <i class="fas fa-bell"></i> Enviar Notificación
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="notifUserNameDisplay" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Usuario:</label>
+                        <label for="notifUserNameDisplay" style="color: #2c3e50; ">Usuario:</label>
                         <input type="text" id="notifUserNameDisplay" class="form-control" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="title" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Título:</label>
+                        <label for="title" style="color: #2c3e50; ">Título:</label>
                         <input type="text" name="title" id="title" class="form-control" maxlength="255" required
                                placeholder="Ej: Mensaje importante del administrador">
                     </div>
                     <div class="form-group">
-                        <label for="message" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Mensaje:</label>
+                        <label for="message" style="color: #2c3e50; ">Mensaje:</label>
                         <textarea name="message" id="message" class="form-control" rows="4" maxlength="1000" required
                                   placeholder="Escribe tu mensaje aquí..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="type" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Tipo:</label>
+                        <label for="type" style="color: #2c3e50; ">Tipo:</label>
                         <select name="type" id="type" class="form-control" required>
                             <option value="info">Información</option>
                             <option value="success">Éxito</option>
@@ -312,7 +311,7 @@
                     </div>
                     <div class="form-check">
                         <input type="checkbox" name="send_email" id="send_email" class="form-check-input" value="1">
-                        <label for="send_email" class="form-check-label" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">
+                        <label for="send_email" class="form-check-label" style="color: #2c3e50; ">
                             También enviar por email
                         </label>
                     </div>
@@ -335,23 +334,23 @@
             <form id="sendTestEmailForm" method="POST">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">
-                        📧 Enviar Email de Prueba
+                    <h5 class="modal-title" style="color: #2c3e50; ">
+                        <i class="fas fa-envelope"></i> Enviar Email de Prueba
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="emailUserDisplay" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Destinatario:</label>
+                        <label for="emailUserDisplay" style="color: #2c3e50; ">Destinatario:</label>
                         <input type="text" id="emailUserDisplay" class="form-control" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="subject" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Asunto:</label>
+                        <label for="subject" style="color: #2c3e50; ">Asunto:</label>
                         <input type="text" name="subject" id="subject" class="form-control" maxlength="255" required
                                placeholder="Ej: Prueba de conectividad de email">
                     </div>
                     <div class="form-group">
-                        <label for="emailMessage" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Mensaje:</label>
+                        <label for="emailMessage" style="color: #2c3e50; ">Mensaje:</label>
                         <textarea name="message" id="emailMessage" class="form-control" rows="5" maxlength="2000" required
                                   placeholder="Escribe el contenido del email..."></textarea>
                     </div>
@@ -374,7 +373,7 @@
             <form id="softDeleteForm" method="POST">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" style="color: #dc3545; font-family: 'Google Sans Text', sans-serif;">
+                    <h5 class="modal-title" style="color: #dc3545; ">
                         ⚠️ Desactivar Usuario
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -385,11 +384,11 @@
                         El usuario será notificado por email y no podrá acceder hasta que sea reactivado.
                     </div>
                     <div class="form-group">
-                        <label for="deleteUserNameDisplay" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Usuario a desactivar:</label>
+                        <label for="deleteUserNameDisplay" style="color: #2c3e50; ">Usuario a desactivar:</label>
                         <input type="text" id="deleteUserNameDisplay" class="form-control" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="deleteReason" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Razón de la desactivación:</label>
+                        <label for="deleteReason" style="color: #2c3e50; ">Razón de la desactivación:</label>
                         <input type="text" name="reason" id="deleteReason" class="form-control" maxlength="255" required
                                placeholder="Ej: Violación de términos de uso, solicitud del usuario...">
                     </div>
@@ -412,23 +411,23 @@
             <form id="editLevelForm" method="POST">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">
-                        ⭐ Editar Nivel
+                    <h5 class="modal-title" style="color: #2c3e50; ">
+                        <i class="fas fa-star"></i> Editar Nivel
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="levelUserNameDisplay" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Usuario:</label>
+                        <label for="levelUserNameDisplay" style="color: #2c3e50; ">Usuario:</label>
                         <input type="text" id="levelUserNameDisplay" class="form-control" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="level" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Nuevo nivel:</label>
+                        <label for="level" style="color: #2c3e50; ">Nuevo nivel:</label>
                         <input type="number" name="level" id="level" class="form-control" min="0" max="100" required>
                         <small class="form-text text-muted">Nivel del usuario (0-100)</small>
                     </div>
                     <div class="form-group">
-                        <label for="levelReason" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Razón del cambio (opcional):</label>
+                        <label for="levelReason" style="color: #2c3e50; ">Razón del cambio (opcional):</label>
                         <input type="text" name="reason" id="levelReason" class="form-control" maxlength="255"
                                placeholder="Ej: Ajuste manual de nivel...">
                     </div>
@@ -451,30 +450,30 @@
             <form id="editPremiumForm" method="POST">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">
-                        👑 Gestionar Premium
+                    <h5 class="modal-title" style="color: #2c3e50; ">
+                        <i class="fas fa-crown"></i> Gestionar Premium
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="premiumUserNameDisplay" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Usuario:</label>
+                        <label for="premiumUserNameDisplay" style="color: #2c3e50; ">Usuario:</label>
                         <input type="text" id="premiumUserNameDisplay" class="form-control" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="is_premium" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Estado Premium:</label>
+                        <label for="is_premium" style="color: #2c3e50; ">Estado Premium:</label>
                         <select name="is_premium" id="is_premium" class="form-control" required>
                             <option value="0">No Premium</option>
                             <option value="1">Premium</option>
                         </select>
                     </div>
                     <div class="form-group" id="premiumDatesGroup" style="display: none;">
-                        <label for="premium_expires_at" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Fecha de expiración:</label>
+                        <label for="premium_expires_at" style="color: #2c3e50; ">Fecha de expiración:</label>
                         <input type="date" name="premium_expires_at" id="premium_expires_at" class="form-control">
                         <small class="form-text text-muted">Dejar vacío para premium permanente</small>
                     </div>
                     <div class="form-group">
-                        <label for="premiumReason" style="color: #2c3e50; font-family: 'Google Sans Text', sans-serif;">Razón del cambio (opcional):</label>
+                        <label for="premiumReason" style="color: #2c3e50; ">Razón del cambio (opcional):</label>
                         <input type="text" name="reason" id="premiumReason" class="form-control" maxlength="255"
                                placeholder="Ej: Promoción especial, premio...">
                     </div>
@@ -689,7 +688,7 @@ window.toggleDropdown = function(button) {
     padding: 8px 16px;
     transition: all 0.2s ease;
     color: #495057;
-    font-family: 'Google Sans Text', sans-serif;
+    
 }
 
 .dropdown-item:hover {
@@ -717,7 +716,7 @@ window.toggleDropdown = function(button) {
     font-size: 0.75rem;
     padding: 0.5em 0.8em;
     font-weight: 500;
-    font-family: 'Google Sans Text', sans-serif;
+    
 }
 
 .badge.bg-info {

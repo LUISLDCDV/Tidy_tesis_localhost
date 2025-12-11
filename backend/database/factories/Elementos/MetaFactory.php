@@ -12,13 +12,13 @@ class MetaFactory extends Factory
     public function definition()
     {
         return [
-            'elemento_id' => null, // O usa \App\Models\Elementos\Elemento::factory()
+            'elemento_id' => \App\Models\Elementos\Elemento::factory(),
             'tipo' => $this->faker->randomElement(['personal', 'profesional', 'otro']),
             'fechaCreacion' => $this->faker->date(),
             'fechaVencimiento' => $this->faker->optional()->date(),
             'nombre' => $this->faker->words(3, true),
             'informacion' => $this->faker->sentence(),
-            'objetivo_id' => null, // O usa \App\Models\Elementos\Objetivo::factory()
+            'objetivo_id' => \App\Models\Elementos\Objetivo::factory(),
             'status' => $this->faker->randomElement(['pendiente', 'en progreso', 'completada']),
         ];
     }

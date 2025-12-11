@@ -84,6 +84,7 @@
 
 <script>
 
+// TODO CAMBIAR FORMATO Y INPUT PARA VALOR PUNTO
 import PlayerCard from './PlayerCard.vue';
 
 export default {

@@ -9,10 +9,11 @@ Use App\Models\Elementos\Objetivo;
 Use App\Models\Elementos\Nota;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Elemento extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'elementos';
     protected $primaryKey = 'id';

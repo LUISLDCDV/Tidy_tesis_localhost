@@ -13,67 +13,80 @@ class TiposNotasSeeder extends Seeder
             [
                 'nombre' => 'Normal',
                 'descripcion' => 'Nota de texto simple',
-                'puntos_necesarios' => 0
+                'puntos_necesarios' => 0,
+                'is_premium' => false
             ],
             [
                 'nombre' => 'Comida semana',
                 'descripcion' => 'Planificador de comidas semanal',
-                'puntos_necesarios' => 0
+                'puntos_necesarios' => 0,
+                'is_premium' => false
             ],
             [
                 'nombre' => 'Claves',
                 'descripcion' => 'Nota con con registro de claves',
-                'puntos_necesarios' => 0
+                'puntos_necesarios' => 0,
+                'is_premium' => false
             ],
             [
                 'nombre' => 'Código',
                 'descripcion' => 'Nota para fragmentos de código',
-                'puntos_necesarios' => 0
+                'puntos_necesarios' => 0,
+                'is_premium' => false
             ],
             [
                 'nombre' => 'Compras super',
                 'descripcion' => 'Lista de productos supermercado',
-                'puntos_necesarios' => 0
+                'puntos_necesarios' => 0,
+                'is_premium' => false
             ],
             [
                 'nombre' => 'Gastos mensuales',
                 'descripcion' => 'Registro de pagos pendientes',
-                'puntos_necesarios' => 0
+                'puntos_necesarios' => 0,
+                'is_premium' => false
             ],
             [
                 'nombre' => 'Juegos',
                 'descripcion' => 'Tabla de puntos juego',
-                'puntos_necesarios' => 0
+                'puntos_necesarios' => 0,
+                'is_premium' => false
             ],
             [
                 'nombre' => 'Presupuesto',
                 'descripcion' => 'Gestión de presupuesto',
-                'puntos_necesarios' => 0
+                'puntos_necesarios' => 0,
+                'is_premium' => false
             ],
             [
                 'nombre' => 'Timebox',
                 'descripcion' => 'Gestión de tiempo',
-                'puntos_necesarios' => 0
+                'puntos_necesarios' => 0,
+                'is_premium' => false
             ],
             [
                 'nombre' => 'Recetas',
                 'descripcion' => 'Registros recetas comidas',
-                'puntos_necesarios' => 0
+                'puntos_necesarios' => 0,
+                'is_premium' => false
             ],
             [
                 'nombre' => 'Medidas construcción',
                 'descripcion' => 'Guardar medidas de elemento',
-                'puntos_necesarios' => 0
+                'puntos_necesarios' => 0,
+                'is_premium' => false
             ],
             [
                 'nombre' => 'Gustos y recomendaciones',
                 'descripcion' => 'Guardar recomendaciones',
-                'puntos_necesarios' => 0
+                'puntos_necesarios' => 0,
+                'is_premium' => false
             ],
             [
                 'nombre' => 'Pedido comida grupa',
                 'descripcion' => 'Organizar pedidos comida grupal',
-                'puntos_necesarios' => 0
+                'puntos_necesarios' => 0,
+                'is_premium' => false
             ],      
             [
                 'nombre' => 'Nota viaje',

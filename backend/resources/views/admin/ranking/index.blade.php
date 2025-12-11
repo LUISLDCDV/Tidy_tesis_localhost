@@ -17,7 +17,7 @@
                 <div class="col-lg-6">
                     <div class="card shadow mb-4">
                         <div class="card-header">
-                            <h6 class="m-0 font-weight-bold text-primary">🏆 Top por Experiencia</h6>
+                            <h6 class="m-0 font-weight-bold text-white"><i class="fas fa-trophy"></i> Top por Experiencia</h6>
                         </div>
                         <div class="card-body">
                             @php
@@ -59,7 +59,7 @@
                 <div class="col-lg-6">
                     <div class="card shadow mb-4">
                         <div class="card-header">
-                            <h6 class="m-0 font-weight-bold text-success">📝 Top por Elementos</h6>
+                            <h6 class="m-0 font-weight-bold text-success"><i class="fas fa-clipboard"></i> Top por Elementos</h6>
                         </div>
                         <div class="card-body">
                             <div class="alert alert-info">
@@ -73,7 +73,7 @@
 
             <div class="card shadow">
                 <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-warning">📊 Estadísticas Generales</h6>
+                    <h6 class="m-0 font-weight-bold text-warning"><i class="fas fa-chart-bar"></i> Estadísticas Generales</h6>
                 </div>
                 <div class="card-body">
                     <div class="row">

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password');
 
             $table->string('last_name');
-            $table->string('phone',30)->unique();
+            $table->string('phone',30)->nullable();
             $table->string('attempts')->default(0);
             $table->integer('status')->nullable();
 

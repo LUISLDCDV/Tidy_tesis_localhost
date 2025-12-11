@@ -31,7 +31,11 @@ RUN useradd -G www-data,root -u 1000 -d /home/tidyuser tidyuser && \
 WORKDIR /var/www
 
 # Copiar código
-COPY --chown=tidyuser:tidyuser . /var/www
+COPY . /var/www
+
+# Instalar dependencias de Composer como root (incluyendo dev para desarrollo)
+RUN composer install --no-interaction --no-scripts && \
+    composer dump-autoload --optimize
 
 # Crear directorios de storage necesarios
 RUN mkdir -p storage/logs \
@@ -41,9 +45,9 @@ RUN mkdir -p storage/logs \
     storage/app/public \
     bootstrap/cache
 
-# Permisos en directorios críticos
-RUN chmod -R 775 storage bootstrap/cache && \
-    chown -R tidyuser:tidyuser /var/www
+# Permisos solo en directorios que necesitan escritura
+RUN chown -R tidyuser:tidyuser storage bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache
 
 # Cambiar al usuario no-root
 USER tidyuser

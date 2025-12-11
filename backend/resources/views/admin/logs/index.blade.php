@@ -29,7 +29,7 @@
             <!-- Información del archivo de logs -->
             <div class="card mb-4">
                 <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-primary">
+                    <h6 class="m-0 font-weight-bold text-white">
                         <i class="fas fa-info-circle"></i> Información de Logs
                     </h6>
                 </div>
@@ -62,7 +62,7 @@
             <!-- Logs recientes -->
             <div class="card">
                 <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-primary">
+                    <h6 class="m-0 font-weight-bold text-white">
                         <i class="fas fa-list"></i> Entradas Recientes
                         @if(count($logs ?? []) > 0)
                             <span class="badge bg-info ms-2">{{ count($logs) }} entradas</span>
@@ -93,7 +93,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach($logs as $log)
-                                        <tr>
+                                        <tr style="cursor: pointer;" onclick="showComingSoonModal()" title="Click para ver detalles">
                                             <td>
                                                 <small class="text-muted">{{ $log['date'] ?? 'N/A' }}</small>
                                             </td>

@@ -144,7 +144,7 @@ export default {
   name: 'HelpCenter',
 
   setup() {
-    const { t } = useI18n({ useScope: 'global' })
+    const { t } = useI18n()
     const $q = useQuasar()
 
     const submitting = ref(false)
@@ -211,7 +211,7 @@ export default {
         answer: t('help.faq.q9.answer')
       },
       {
-        icon: 'security',
+        icon: 'cloud_queue',
         question: t('help.faq.q10.question'),
         answer: t('help.faq.q10.answer')
       }
@@ -268,7 +268,7 @@ export default {
 }
 
 .hero-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10741a 0%, #2d9e95 100%);
   color: white;
   margin-bottom: 2rem;
 }
@@ -327,12 +327,12 @@ export default {
 }
 
 .feedback-section .q-btn {
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+  box-shadow: 0 4px 12px rgba(16, 116, 25, 0.3);
   transition: all 0.3s ease;
 }
 
 .feedback-section .q-btn:hover {
-  box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+  box-shadow: 0 6px 20px rgba(16, 116, 25, 0.4);
   transform: translateY(-2px);
 }
 

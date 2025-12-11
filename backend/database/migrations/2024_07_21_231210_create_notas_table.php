@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // TODO: HACER LA TABLA TIPOS DE NOTAS
         Schema::create('notas', function (Blueprint $table) {
             $table->id();
             

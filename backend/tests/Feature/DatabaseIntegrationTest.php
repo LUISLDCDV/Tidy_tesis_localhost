@@ -11,10 +11,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
+use Tests\Traits\SeedsTiposNotas;
 
 class DatabaseIntegrationTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker, SeedsTiposNotas;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seedTiposNotas();
+    }
 
     /** @test */
     public function it_properly_handles_database_transactions()
@@ -60,7 +67,7 @@ class DatabaseIntegrationTest extends TestCase
 
         // Test cascade relationships
         $this->assertDatabaseHas('users', ['id' => $user->id]);
-        $this->assertDatabaseHas('usuario_cuentas', ['user_id' => $user->id]);
+        $this->assertDatabaseHas('cuentas', ['user_id' => $user->id]);
         $this->assertDatabaseHas('elementos', ['cuenta_id' => $cuenta->id]);
         $this->assertDatabaseHas('alarmas', ['elemento_id' => $elemento->id]);
 

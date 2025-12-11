@@ -34,9 +34,15 @@ class AdminDashboardController extends Controller
                     'dashboardData' => $data['data']
                 ]);
             } else {
+                $errorMessage = $data['message'] ?? 'Error desconocido';
+                if (isset($data['error'])) {
+                    $errorMessage .= ': ' . $data['error'];
+                }
+
                 return view('admin.dashboard.index', [
                     'dashboardData' => null,
-                    'error' => $data['message']
+                    'error' => $errorMessage,
+                    'trace' => $data['trace'] ?? null
                 ]);
             }
 

@@ -12,6 +12,7 @@ class AlarmaFactory extends Factory
     public function definition()
     {
         return [
+            'elemento_id' => \App\Models\Elementos\Elemento::factory(),
             'fecha' => $this->faker->date(),
             'hora' => $this->faker->time(),
             'fechaVencimiento' => $this->faker->date(),
@@ -20,11 +21,16 @@ class AlarmaFactory extends Factory
             'informacion' => $this->faker->paragraph(),
             'intensidad_volumen' => $this->faker->numberBetween(1, 10),
             'configuraciones' => [
-                'gps' => $this->faker->latitude() . ',' . $this->faker->longitude(),
-                'clima' => $this->faker->randomElement(['soleado', 'lluvioso', 'nublado']),
+                'gps' => [
+                    'latitude' => $this->faker->latitude(),
+                    'longitude' => $this->faker->longitude(),
+                    'radius' => 100
+                ],
+                'clima' => [
+                    'enabled' => true,
+                    'conditions' => $this->faker->randomElement(['rain', 'storm', 'clear'])
+                ],
             ],
-            // Si tienes elemento_id como clave foránea, puedes agregarlo aquí:
-            // 'elemento_id' => Elemento::factory(),
         ];
     }
 }

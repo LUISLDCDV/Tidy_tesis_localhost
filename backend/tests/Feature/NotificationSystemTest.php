@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Models\UsuarioCuenta;
 use App\Models\Notificacion;
+use App\Models\Notification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
@@ -107,14 +108,19 @@ class NotificationSystemTest extends TestCase
     /** @test */
     public function it_creates_notification_when_user_levels_up()
     {
-        // Actualizar nivel del usuario
-        $this->cuenta->update(['nivel' => 2]);
+        // Dar suficiente XP para subir de nivel (nivel 2 requiere 100 XP)
+        $gamificationService = app(\App\Services\GamificationService::class);
+        $gamificationService->giveExperience($this->user->id, 150, 'test');
 
         // Verificar que se creó una notificación de nivel
         $this->assertDatabaseHas('notificaciones', [
             'cuenta_id' => $this->cuenta->id,
             'tipo' => 'nivel_up'
         ]);
+
+        // Verificar que el nivel subió
+        $this->cuenta->refresh();
+        $this->assertGreaterThanOrEqual(2, $this->cuenta->current_level);
     }
 
     /** @test */

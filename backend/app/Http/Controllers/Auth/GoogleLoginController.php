@@ -51,6 +51,9 @@ class GoogleLoginController extends Controller
                        ->orWhere('email', $email)
                        ->first();
 
+            $needsEmailVerification = false;
+            $needsPasswordSetup = false;
+
             if ($user) {
                 // Usuario existente - actualizar datos
                 $user->update([
@@ -62,6 +65,19 @@ class GoogleLoginController extends Controller
                 ]);
 
                 Log::info('Usuario existente actualizado:', ['user_id' => $user->id]);
+
+                // Verificar si el email está confirmado (sin bloquear el login)
+                if (!$user->email_verified_at) {
+                    $needsEmailVerification = true;
+                    Log::warning('Usuario con Google sin email verificado (mostrar recordatorio):', ['user_id' => $user->id]);
+                }
+
+                // Verificar si tiene password configurado
+                // Los usuarios que se registran con Google tienen password temporal
+                // Recomendamos que configuren uno personalizado
+                if ($user->provider === 'google') {
+                    $needsPasswordSetup = true;
+                }
             } else {
                 // Crear nuevo usuario
                 // Separar el nombre completo en nombre y apellido
@@ -143,7 +159,13 @@ class GoogleLoginController extends Controller
                 'success' => true,
                 'message' => 'Login con Google exitoso',
                 'user' => $userData,
-                'token' => $token
+                'token' => $token,
+                'needs_email_verification' => $needsEmailVerification,
+                'needs_password_setup' => $needsPasswordSetup,
+                'reminders' => [
+                    'email_verification' => $needsEmailVerification ? 'Por favor verifica tu dirección de email' : null,
+                    'password_setup' => $needsPasswordSetup ? 'Te recomendamos configurar una contraseña para tu cuenta' : null
+                ]
             ], 200);
 
         } catch (\Exception $e) {

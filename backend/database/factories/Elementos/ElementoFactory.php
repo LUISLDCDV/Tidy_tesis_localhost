@@ -28,9 +28,10 @@ class ElementoFactory extends Factory
     {
         return [
             'descripcion' => $this->faker->sentence(4),
-            'cuenta_id' => 1, // O usa un factory para Cuenta si tienes relación
+            'cuenta_id' => \App\Models\UsuarioCuenta::factory(),
             'tipo' => $this->faker->randomElement(['alarma', 'objetivo', 'meta', 'calendario', 'evento', 'nota']),
-            // Agrega aquí otros campos si tu tabla los tiene
+            'estado' => 'activo',
+            'orden' => $this->faker->numberBetween(1, 100),
         ];
     }
 

@@ -12,25 +12,24 @@ class EventoFactory extends Factory
     public function definition()
     {
         return [
-            'elemento_id' => null, // Asigna un ID válido o usa Elemento::factory() si tienes el factory
+            'elemento_id' => \App\Models\Elementos\Elemento::factory(),
             'nombre' => $this->faker->sentence(3),
             'informacion' => $this->faker->paragraph(),
             'fechaVencimiento' => $this->faker->date(),
             'horaVencimiento' => $this->faker->time(),
-            'calendario_id' => null, // Asigna un ID válido o usa Calendario::factory() si tienes el factory
+            'calendario_id' => \App\Models\Elementos\Calendario::factory(),
             'metadata' => [
                 'extra' => $this->faker->word(),
             ],
             'tipo' => $this->faker->randomElement(['personal', 'laboral', 'otro']),
-            
-            'gps' => json_encode([
+            'gps' => [
                 'latitud' => $this->faker->latitude(),
                 'longitud' => $this->faker->longitude(),
-            ]),
-
-            'clima' => json_encode([
+            ],
+            'clima' => [
                 'estado' => $this->faker->randomElement(['soleado', 'lluvioso', 'nublado']),
-            ]),
+            ],
+            'recurrencia' => null,
         ];
     }
 }

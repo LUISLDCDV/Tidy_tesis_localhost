@@ -226,6 +226,7 @@
 
 <script>
 
+// TODO : BUG Y HOVER PARA LOS DATOS 
 export default {
   name: 'PresupuestoView',
   props: {

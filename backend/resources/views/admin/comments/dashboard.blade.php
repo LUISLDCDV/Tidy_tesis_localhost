@@ -155,7 +155,7 @@
     <!-- Comentarios Recientes -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Comentarios Recientes</h6>
+            <h6 class="m-0 font-weight-bold text-white">Comentarios Recientes</h6>
         </div>
         <div class="card-body">
             @if($recentComments->count() > 0)
@@ -202,7 +202,7 @@
         <div class="col-lg-6 mb-4">
             <div class="card shadow">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Comentarios por Tipo</h6>
+                    <h6 class="m-0 font-weight-bold text-white">Comentarios por Tipo</h6>
                 </div>
                 <div class="card-body">
                     @if(isset($stats['by_type']) && count($stats['by_type']) > 0)
@@ -238,7 +238,7 @@
         <div class="col-lg-6 mb-4">
             <div class="card shadow">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Comentarios por Estado</h6>
+                    <h6 class="m-0 font-weight-bold text-white">Comentarios por Estado</h6>
                 </div>
                 <div class="card-body">
                     @if(isset($stats['by_status']) && count($stats['by_status']) > 0)

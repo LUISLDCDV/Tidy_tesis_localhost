@@ -283,6 +283,7 @@ export default {
   },
   methods: {
     closeModal() {
+      // TODO: Implementar limpieza con Pinia
       this.currentEvent = { ...this.defaultEvent };
       this.resetFormErrors();
       this.$emit('close');

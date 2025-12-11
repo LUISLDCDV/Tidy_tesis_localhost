@@ -31,6 +31,14 @@ class UsuarioCuenta extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    /**
+     * Alias para la relación usuario
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function medioPago()
     {
         return $this->hasOne(MedioDePago::class, 'id_medio_pago');
@@ -49,6 +57,7 @@ class UsuarioCuenta extends Model
     protected $casts = [
         'is_premium' => 'boolean',
         'premium_expires_at' => 'datetime',
+        'configuraciones' => 'array',
     ];
 
     public function isPremiumActive()

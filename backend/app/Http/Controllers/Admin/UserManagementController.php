@@ -33,12 +33,12 @@ class UserManagementController extends Controller
             // Obtener usuarios con niveles y cuenta - con manejo de errores mejorado
             try {
                 $query = User::with(['userLevel', 'cuenta'])
-                    ->whereDoesntHave('roles', function ($q) {
+                    ->whereHas('roles', function ($q) {
                         $q->where('name', 'admin');
                     });
             } catch (\Exception $e) {
                 // Si falla la relación, usar consulta sin eager loading
-                $query = User::whereDoesntHave('roles', function ($q) {
+                $query = User::whereHas('roles', function ($q) {
                     $q->where('name', 'admin');
                 });
             }

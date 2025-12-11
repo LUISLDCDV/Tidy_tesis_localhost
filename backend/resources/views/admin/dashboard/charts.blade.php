@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0 text-gray-800">📊 Estadísticas y Gráficos</h1>
+                <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-chart-bar"></i> Estadísticas y Gráficos</h1>
                 <a href="{{ route('home') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Volver al Dashboard
                 </a>
@@ -22,8 +22,10 @@
             @if($chartsData)
                 <!-- Filtros de período -->
                 <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">🗓️ Período de Análisis</h6>
+                    <div class="card-header py-3" style="background: linear-gradient(135deg,rgb(16, 116, 25) 0%,rgb(45, 158, 149) 100%);">
+                        <h6 class="m-0 font-weight-bold text-white">
+                            <i class="fas fa-calendar-alt"></i> Período de Análisis
+                        </h6>
                     </div>
                     <div class="card-body">
                         <form method="GET" action="{{ route('admin.dashboard.charts') }}">
@@ -48,12 +50,14 @@
                     <!-- Registros de usuarios -->
                     <div class="col-lg-6">
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">📈 Registros de Usuarios</h6>
+                            <div class="card-header py-3" style="background: linear-gradient(135deg,rgb(16, 116, 25) 0%,rgb(45, 158, 149) 100%);">
+                                <h6 class="m-0 font-weight-bold text-white"><i class="fas fa-chart-line"></i> Registros de Usuarios</h6>
                             </div>
                             <div class="card-body">
                                 @if(isset($chartsData['user_registrations']) && count($chartsData['user_registrations']) > 0)
-                                    <canvas id="userRegistrationsChart" width="100%" height="40"></canvas>
+                                    <div style="height: 300px;">
+                                        <canvas id="userRegistrationsChart"></canvas>
+                                    </div>
                                     <div class="mt-3">
                                         <h6 class="text-primary">Datos del período:</h6>
                                         <ul class="list-unstyled">
@@ -75,12 +79,14 @@
                     <!-- Actividad de usuarios -->
                     <div class="col-lg-6">
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-success">🔥 Actividad de Usuarios</h6>
+                            <div class="card-header py-3" style="background: linear-gradient(135deg,rgb(16, 116, 25) 0%,rgb(45, 158, 149) 100%);">
+                                <h6 class="m-0 font-weight-bold text-white"><i class="fas fa-fire"></i> Actividad de Usuarios</h6>
                             </div>
                             <div class="card-body">
                                 @if(isset($chartsData['user_activity']) && count($chartsData['user_activity']) > 0)
-                                    <canvas id="userActivityChart" width="100%" height="40"></canvas>
+                                    <div style="height: 300px;">
+                                        <canvas id="userActivityChart"></canvas>
+                                    </div>
                                     <div class="mt-3">
                                         <h6 class="text-success">Datos del período:</h6>
                                         <ul class="list-unstyled">
@@ -104,12 +110,14 @@
                     <!-- Creación de elementos -->
                     <div class="col-lg-8">
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-warning">📋 Creación de Elementos</h6>
+                            <div class="card-header py-3" style="background: linear-gradient(135deg,rgb(16, 116, 25) 0%,rgb(45, 158, 149) 100%);">
+                                <h6 class="m-0 font-weight-bold text-white"><i class="fas fa-clipboard-list"></i> Creación de Elementos</h6>
                             </div>
                             <div class="card-body">
                                 @if(isset($chartsData['element_creation']) && count($chartsData['element_creation']) > 0)
-                                    <canvas id="elementCreationChart" width="100%" height="30"></canvas>
+                                    <div style="height: 300px;">
+                                        <canvas id="elementCreationChart"></canvas>
+                                    </div>
                                     <div class="mt-3">
                                         <h6 class="text-warning">Elementos por tipo:</h6>
                                         <div class="row">
@@ -141,12 +149,14 @@
                     <!-- Ingresos -->
                     <div class="col-lg-4">
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-info">💰 Ingresos</h6>
+                            <div class="card-header py-3" style="background: linear-gradient(135deg,rgb(16, 116, 25) 0%,rgb(45, 158, 149) 100%);">
+                                <h6 class="m-0 font-weight-bold text-white"><i class="fas fa-dollar-sign"></i> Ingresos</h6>
                             </div>
                             <div class="card-body">
                                 @if(isset($chartsData['revenue']) && count($chartsData['revenue']) > 0)
-                                    <canvas id="revenueChart" width="100%" height="60"></canvas>
+                                    <div style="height: 300px;">
+                                        <canvas id="revenueChart"></canvas>
+                                    </div>
                                     <div class="mt-3">
                                         <h6 class="text-info">Resumen financiero:</h6>
                                         <ul class="list-unstyled">
@@ -167,7 +177,7 @@
 
             @else
                 <div class="alert alert-info" role="alert">
-                    <h4 class="alert-heading">📊 Estadísticas no disponibles</h4>
+                    <h4 class="alert-heading"><i class="fas fa-chart-bar"></i> Estadísticas no disponibles</h4>
                     <p>No se pudieron cargar los datos de estadísticas.</p>
                 </div>
             @endif
@@ -190,17 +200,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     label: 'Registros',
                     data: userRegData.map(item => item.count),
-                    borderColor: '#4e73df',
-                    backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                    borderColor: 'rgb(16, 116, 25)',
+                    backgroundColor: 'rgba(16, 116, 25, 0.1)',
                     tension: 0.3
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
                     }
                 }
             }
@@ -217,15 +236,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     label: 'Usuarios Activos',
                     data: userActivityData.map(item => item.count),
-                    backgroundColor: '#1cc88a'
+                    backgroundColor: 'rgba(45, 158, 149, 0.8)',
+                    borderColor: 'rgb(45, 158, 149)',
+                    borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
                     }
                 }
             }
@@ -246,7 +276,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         const dates = Object.keys(elementsByDate).sort();
-        const colors = ['#f6c23e', '#e74a3b', '#36b9cc', '#858796', '#5a5c69'];
+        const colors = [
+            'rgb(16, 116, 25)',
+            'rgb(45, 158, 149)',
+            'rgb(76, 175, 80)',
+            'rgb(33, 150, 243)',
+            'rgb(156, 39, 176)'
+        ];
 
         new Chart(document.getElementById('elementCreationChart'), {
             type: 'line',
@@ -256,16 +292,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     label: type.charAt(0).toUpperCase() + type.slice(1),
                     data: dates.map(date => elementsByDate[date][type] || 0),
                     borderColor: colors[index % colors.length],
-                    backgroundColor: colors[index % colors.length] + '20',
+                    backgroundColor: colors[index % colors.length].replace('rgb', 'rgba').replace(')', ', 0.1)'),
                     tension: 0.3
                 }))
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
                     }
                 }
             }
@@ -282,17 +327,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     data: revenueData.map(item => item.revenue),
                     backgroundColor: [
-                        '#36b9cc',
-                        '#1cc88a',
-                        '#f6c23e',
-                        '#e74a3b',
-                        '#858796'
-                    ]
+                        'rgba(16, 116, 25, 0.8)',
+                        'rgba(45, 158, 149, 0.8)',
+                        'rgba(76, 175, 80, 0.8)',
+                        'rgba(33, 150, 243, 0.8)',
+                        'rgba(156, 39, 176, 0.8)'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
             }
         });
         @endif

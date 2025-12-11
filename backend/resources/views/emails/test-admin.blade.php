@@ -99,7 +99,7 @@
             <p>{{ $messageContent }}</p>
 
             <div class="config-info">
-                <h4>📧 Configuración de Email Actual</h4>
+                <h4><i class="fas fa-envelope"></i> Configuración de Email Actual</h4>
                 <table class="config-table">
                     <tr>
                         <td>Proveedor SMTP:</td>
@@ -132,9 +132,9 @@
 
             <p><strong>Próximos pasos:</strong></p>
             <ul>
-                <li>✅ Configuración SMTP verificada</li>
-                <li>✅ Conectividad con Maileroo establecida</li>
-                <li>📧 Sistema listo para notificaciones de usuario</li>
+                <li><i class="fas fa-check-circle"></i> Configuración SMTP verificada</li>
+                <li><i class="fas fa-check-circle"></i> Conectividad con Maileroo establecida</li>
+                <li><i class="fas fa-envelope"></i> Sistema listo para notificaciones de usuario</li>
                 <li>🔔 Sistema listo para emails de administración</li>
             </ul>
         </div>

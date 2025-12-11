@@ -6,27 +6,30 @@ namespace App\Models\Elementos;
 use  App\Models\Elementos\Elemento;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Alarma extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'alarmas';
     protected $primaryKey = 'id';
     //FALTA GPS 
 
     protected $fillable = [
+        'elemento_id',
         'fecha',
         'hora',
         'fechaVencimiento',
         'horaVencimiento',
         'nombre',
         'informacion',
-        'para_no_olvidar',
         'intensidad_volumen',
         'configuraciones',
+        'tipo_alarma',
+        'ubicacion',
     ];
-    
+
     public function elemento()
     {
         return $this->belongsTo(Elemento::class);
@@ -34,7 +37,16 @@ class Alarma extends Model
 
     protected $casts = [
         'configuraciones' => 'array',
+        'ubicacion' => 'array',
     ];
+
+    protected $appends = ['descripcion'];
+
+    // Accessor para compatibilidad con API
+    public function getDescripcionAttribute()
+    {
+        return $this->attributes['informacion'] ?? '';
+    }
 
     public function getGpsAttribute()
     {

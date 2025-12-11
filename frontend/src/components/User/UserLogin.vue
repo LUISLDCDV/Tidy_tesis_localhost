@@ -57,16 +57,6 @@
             </template>
           </q-input>
 
-          <!-- Checkbox Recordarme -->
-          <div class="row q-mb-md">
-            <q-checkbox
-              v-model="rememberMe"
-              label="Recordarme"
-              color="primary"
-              class="text-grey-7"
-            />
-          </div>
-
           <q-btn
             type="submit"
             color="primary"
@@ -83,8 +73,8 @@
             Iniciar Sesión
           </q-btn>
 
-          <!-- Login con Google -->
-          <div class="text-center q-my-md">
+          <!-- Login con Google (desktop o APK nativa) -->
+          <div v-if="!$q.platform.is.mobile || isNativeApp" class="text-center q-my-md">
             <q-separator spaced />
             <div class="text-caption text-grey-6 q-mb-md">O inicia sesión con</div>
             <q-btn
@@ -159,8 +149,7 @@ export default {
       loading: false,
       googleLoading: false,
       showPassword: false,
-      sessionExpiredMessage: '',
-      rememberMe: false
+      sessionExpiredMessage: ''
     };
   },
 
@@ -169,23 +158,10 @@ export default {
     return { authStore };
   },
 
-  mounted() {
-    // Verificar si hay una preferencia guardada de recordarme
-    this.rememberMe = this.authStore.rememberMe;
-
-    // Si había recordarme activado y hay datos guardados, prellenar email
-    if (this.rememberMe && localStorage.getItem('user')) {
-      try {
-        const userData = JSON.parse(localStorage.getItem('user'));
-        this.email = userData.email || '';
-      } catch (err) {
-        console.warn('Error al cargar email guardado:', err);
-      }
-    }
-
-    // Verificar si hay mensaje de sesión expirada en la query
-    if (this.$route.query.message) {
-      this.sessionExpiredMessage = this.$route.query.message;
+  computed: {
+    isNativeApp() {
+      // Detectar si estamos en una app nativa (Capacitor)
+      return window.Capacitor?.isNativePlatform() || false;
     }
   },
 
@@ -200,21 +176,26 @@ export default {
           email: this.email,
           password: this.password,
         };
-        
-        // Intentar login con el store
+
+        // Intentar login con el store (siempre recordar)
         try {
-          const result = await this.authStore.login(credentials, this.rememberMe);
+          const result = await this.authStore.login(credentials);
           console.log('Resultado login:', result);
-          
+
           if (result) {
             console.log('Login exitoso, redirigiendo...');
 
-            // Pequeño delay para asegurar que el token se guarde correctamente
-            await new Promise(resolve => setTimeout(resolve, 100));
+            // Esperar a que el estado se actualice completamente
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // Forzar actualización del estado de autenticación
+            await this.authStore.checkAuthStatus();
 
             // Redireccionar a la página original o a Home
             const redirectTo = this.$route.query.redirect || '/Home';
-            this.$router.push(redirectTo);
+
+            // Usar replace para evitar problemas de historial en Capacitor
+            this.$router.replace(redirectTo);
             return;
           }
         } catch (serverError) {
@@ -224,7 +205,7 @@ export default {
         // Si el servidor no está disponible, hacer login demo para desarrollo
         if (this.email === 'demo@demo.com' && this.password === 'demo123') {
           console.log('Login demo exitoso');
-          
+
           // Simular datos de usuario para desarrollo
           const mockUser = {
             id: 1,
@@ -232,21 +213,24 @@ export default {
             email: 'demo@demo.com'
           };
           const mockToken = 'demo-token-' + Date.now();
-          
+
           // Guardar en localStorage
           localStorage.setItem('auth_token', mockToken);
           localStorage.setItem('user', JSON.stringify(mockUser));
-          
+
           // Actualizar store
           this.authStore.token = mockToken;
           this.authStore.user = mockUser;
           this.authStore.isAuthenticated = true;
-          
+
+          // Esperar a que el estado se actualice completamente
+          await new Promise(resolve => setTimeout(resolve, 300));
+
           // Redireccionar a la página original o a Home
           const redirectTo = this.$route.query.redirect || '/Home';
-          this.$router.push(redirectTo);
+          this.$router.replace(redirectTo);
         } else {
-          this.error = 'Credenciales inválidas. Para demo use: demo@demo.com / demo123';
+          this.error = 'Credenciales inválidas';
         }
       } catch (error) {
         console.error('Error en login:', error);
@@ -279,14 +263,15 @@ export default {
         if (response.success) {
           console.log('Login con Google exitoso');
 
-          // Aplicar configuración recordarme si estaba activada
-          if (this.rememberMe) {
-            this.authStore.setRememberMe(true);
-          }
+          // Esperar a que el estado se actualice completamente
+          await new Promise(resolve => setTimeout(resolve, 300));
+
+          // Forzar actualización del estado de autenticación
+          await this.authStore.checkAuthStatus();
 
           // Redirigir al home o página solicitada
           const redirectPath = this.$route.query.redirect || '/Home';
-          this.$router.push(redirectPath);
+          this.$router.replace(redirectPath);
         } else {
           this.error = response.message || 'Error al iniciar sesión con Google';
         }
@@ -309,18 +294,28 @@ export default {
   // Verificar si ya está autenticado
   created() {
     console.log('Login component created');
-    
+
     // Capturar mensaje de sesión expirada de la query string
     const message = this.$route.query.message;
     if (message) {
       this.sessionExpiredMessage = message;
     }
-    
-    const token = localStorage.getItem('auth_token');
-    console.log('Token existente:', token);
-    if (token) {
-      console.log('Usuario ya autenticado, redirigiendo a Home');
-      this.$router.push('/Home');
+  },
+
+  async mounted() {
+    // Verificar si hay mensaje de sesión expirada en la query
+    if (this.$route.query.message) {
+      this.sessionExpiredMessage = this.$route.query.message;
+    }
+
+    // Esperar a que el authStore se inicialice completamente
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Si el usuario está autenticado al cargar la página, redirigir a Home
+    // Esto captura el caso cuando el usuario navega directamente a /login con sesión activa
+    if (this.authStore.isAuthenticated && !this.loading) {
+      console.log('Usuario autenticado detectado, redirigiendo a Home');
+      this.$router.replace('/Home');
     }
   }
 };

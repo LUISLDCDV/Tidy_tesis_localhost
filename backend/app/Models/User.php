@@ -59,7 +59,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function usuarioCuenta()
     {
-        return $this->hasOne(UsuarioCuenta::class);
+        return $this->hasOne(UsuarioCuenta::class, 'user_id');
     }
 
     /**
@@ -67,7 +67,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function cuenta()
     {
-        return $this->hasOne(UsuarioCuenta::class);
+        return $this->hasOne(UsuarioCuenta::class, 'user_id');
     }
 
     /**
@@ -108,5 +108,20 @@ class User extends Authenticatable implements MustVerifyEmail
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    /**
+     * Relación con elementos (a través de usuarioCuenta)
+     */
+    public function elementos()
+    {
+        return $this->hasManyThrough(
+            \App\Models\Elementos\Elemento::class,
+            UsuarioCuenta::class,
+            'user_id',    // Foreign key en cuentas
+            'cuenta_id',  // Foreign key en elementos
+            'id',         // Local key en users
+            'id'          // Local key en cuentas
+        );
     }
 }

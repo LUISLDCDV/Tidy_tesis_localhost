@@ -84,7 +84,7 @@
 
             @if(isset($reason) && $reason)
             <div class="reason-box">
-                <h3>📋 Motivo de la desactivación:</h3>
+                <h3><i class="fas fa-clipboard-list"></i> Motivo de la desactivación:</h3>
                 <p>{{ $reason }}</p>
             </div>
             @endif
@@ -92,7 +92,7 @@
             <p>Durante este período, no podrás acceder a tu cuenta ni utilizar las funcionalidades de Tidy.</p>
 
             <div class="contact-info">
-                <h3 style="margin-top: 0; color: #2c3e50;">💬 ¿Necesitas ayuda?</h3>
+                <h3 style="margin-top: 0; color: #2c3e50;"><i class="fas fa-comments"></i> ¿Necesitas ayuda?</h3>
                 <p>Si consideras que esta acción fue tomada por error o deseas obtener más información, no dudes en contactarnos.</p>
                 <p>
                     <strong>Email de soporte:</strong>

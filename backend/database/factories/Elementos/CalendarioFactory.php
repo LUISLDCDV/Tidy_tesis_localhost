@@ -12,7 +12,7 @@ class CalendarioFactory extends Factory
     public function definition()
     {
         return [
-            'elemento_id' => null, // Asigna un ID válido o usa Elemento::factory() si tienes el factory
+            'elemento_id' => \App\Models\Elementos\Elemento::factory(),
             'nombre' => $this->faker->words(2, true),
             'color' => $this->faker->safeHexColor(),
             'informacion' => $this->faker->sentence(),

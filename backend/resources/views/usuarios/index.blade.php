@@ -2,68 +2,91 @@
 
 @section('content')
 <div class="container">
-    <h1>Panel de Usuarios </h1>
-    <a href="{{ route('usuarios.create') }}" class="btn btn-primary">Crear Usuario ADMIN</a>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users"></i> Panel de Usuarios
+                    </h5>
+                    <a href="{{ route('usuarios.create') }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-user-plus"></i> Crear Usuario ADMIN
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle"></i> {{ session('success') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
 
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-            {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle"></i> {{ session('error') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
+
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> ID</th>
+                                <th><i class="fas fa-user"></i> Nombre</th>
+                                <th><i class="fas fa-user"></i> Apellido</th>
+                                <th><i class="fas fa-envelope"></i> Email</th>
+                                <th><i class="fas fa-user-tag"></i> Rol</th>
+                                <th><i class="fas fa-cog"></i> Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($usuarios as $usuario)
+                                <tr>
+                                    <td>{{ $usuario->id }}</td>
+                                    <td>
+                                        <i class="fas fa-user text-primary"></i>
+                                        {{ $usuario->name }}
+                                    </td>
+                                    <td>{{ $usuario->last_name }}</td>
+                                    <td>{{ $usuario->email }}</td>
+                                    <td>
+                                        <span class="badge badge-primary">
+                                            <i class="fas fa-user-tag"></i> {{ $usuario->roles->pluck('name')->first() }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('usuarios.editRole', $usuario->id) }}" class="btn btn-info btn-sm">
+                                            <i class="fas fa-user-tag"></i> Modificar Rol
+                                        </a>
+                                        <a href="{{ route('usuarios.show', $usuario->id) }}" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i> Ver
+                                        </a>
+                                        <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </a>
+                                        <button type="button" class="btn btn-success btn-sm" onclick="editStats({{ $usuario->id }}, '{{ $usuario->name }}')">
+                                            <i class="fas fa-chart-bar"></i> Editar Stats
+                                        </button>
+                                        <form action="{{ route('usuarios.destroy', $usuario->id) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este usuario?')">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-            {{ session('error') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
-    <table class="table mt-3">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Mail</th>
-                <th>Rol</th>
-                <th>| Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($usuarios as $usuario)
-                <tr>
-                    <td>{{ $usuario->id }}</td>
-                    <td>{{ $usuario->name }}</td>
-                    <td>{{ $usuario->last_name }}</td>
-                    <td>{{ $usuario->email }}</td>
-                    <td>{{ $usuario->roles->pluck('name')->first() }}</td>
-                    <td>
-                        <a href="{{ route('usuarios.editRole', $usuario->id) }}" class="btn btn-info">Modificar Rol</a>
-                    </td>
-                    <td>
-                        <a href="{{ route('usuarios.show', $usuario->id) }}" class="btn btn-info btn-sm">Ver</a>
-                        <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-warning btn-sm" style="margin-left:1.5%">Editar</a>
-
-                        <!-- Botón para editar estadísticas -->
-                        <button type="button" class="btn btn-success btn-sm" style="margin-left:1.5%" onclick="editStats({{ $usuario->id }}, '{{ $usuario->name }}')">
-                            Editar Stats
-                        </button>
-
-                        <form action="{{ route('usuarios.destroy', $usuario->id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+    </div>
 </div>
 
 <!-- Modal para editar estadísticas -->

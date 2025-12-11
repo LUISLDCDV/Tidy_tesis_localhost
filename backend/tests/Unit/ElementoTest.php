@@ -10,10 +10,17 @@ use App\Models\Elementos\Objetivo;
 use App\Models\User;
 use App\Models\UsuarioCuenta;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Traits\SeedsTiposNotas;
 
 class ElementoTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, SeedsTiposNotas;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seedTiposNotas();
+    }
 
     /** @test */
     public function it_can_create_an_elemento()
@@ -39,20 +46,32 @@ class ElementoTest extends TestCase
     {
         $user = User::factory()->create();
         $cuenta = UsuarioCuenta::factory()->create(['user_id' => $user->id]);
-        
+
         $elemento = Elemento::factory()->create([
             'cuenta_id' => $cuenta->id
         ]);
 
-        $this->assertInstanceOf(UsuarioCuenta::class, $elemento->usuario);
-        $this->assertEquals($cuenta->id, $elemento->usuario->id);
+        $this->assertInstanceOf(UsuarioCuenta::class, $elemento->cuenta);
+        $this->assertEquals($cuenta->id, $elemento->cuenta->id);
     }
 
     /** @test */
     public function it_has_relationship_with_nota()
     {
-        $elemento = Elemento::factory()->create(['tipo' => 'nota']);
-        $nota = Nota::factory()->create(['elemento_id' => $elemento->id]);
+        $user = User::factory()->create();
+        $cuenta = UsuarioCuenta::factory()->create(['user_id' => $user->id]);
+        $elemento = Elemento::factory()->create([
+            'tipo' => 'nota',
+            'cuenta_id' => $cuenta->id
+        ]);
+
+        $nota = Nota::create([
+            'elemento_id' => $elemento->id,
+            'nombre' => 'Test Note',
+            'fecha' => now()->toDateString(),
+            'tipo_nota_id' => 1,
+            'contenido' => ['text' => 'Test content']
+        ]);
 
         $this->assertInstanceOf(Nota::class, $elemento->nota);
         $this->assertEquals($nota->id, $elemento->nota->id);
@@ -81,26 +100,32 @@ class ElementoTest extends TestCase
     /** @test */
     public function it_can_update_element_content()
     {
+        $user = User::factory()->create();
+        $cuenta = UsuarioCuenta::factory()->create(['user_id' => $user->id]);
+
         $elemento = Elemento::factory()->create([
-            'contenido' => 'Original content'
+            'cuenta_id' => $cuenta->id,
+            'descripcion' => 'Original description'
         ]);
 
-        $elemento->actualizarElemento('New content');
+        $elemento->update(['descripcion' => 'Updated description']);
 
-        $this->assertEquals('New content', $elemento->fresh()->contenido);
+        $this->assertEquals('Updated description', $elemento->fresh()->descripcion);
     }
 
     /** @test */
     public function it_has_correct_fillable_attributes()
     {
         $elemento = new Elemento();
-        
+
         $expectedFillable = [
             'tipo',
             'descripcion',
             'estado',
             'imagen',
-            'orden'
+            'orden',
+            'configuracion',
+            'cuenta_id',
         ];
 
         $this->assertEquals($expectedFillable, $elemento->getFillable());

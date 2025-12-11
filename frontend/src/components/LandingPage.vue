@@ -114,7 +114,7 @@
           <!-- Feature 6 -->
           <div class="col-12 col-md-6 col-lg-3">
             <q-card flat bordered class="feature-card text-center q-pa-md full-height">
-              <q-icon name="cloud_sync" size="64px" color="blue" class="q-mb-md" />
+              <q-icon name="cloud_sync" size="64px" color="positive" class="q-mb-md" />
               <h3 class="text-h6 text-weight-medium q-mb-sm">{{ $t('landing.features.synchronization.title') }}</h3>
               <p class="text-grey-7">
                 {{ $t('landing.features.synchronization.description') }}
@@ -136,7 +136,7 @@
           <!-- Feature 8 -->
           <div class="col-12 col-md-6 col-lg-3">
             <q-card flat bordered class="feature-card text-center q-pa-md full-height">
-              <q-icon name="shield" size="64px" color="teal" class="q-mb-md" />
+              <q-icon name="language" size="64px" color="teal" class="q-mb-md" />
               <h3 class="text-h6 text-weight-medium q-mb-sm">{{ $t('landing.features.security.title') }}</h3>
               <p class="text-grey-7">
                 {{ $t('landing.features.security.description') }}
@@ -201,17 +201,11 @@ export default {
 
   methods: {
     downloadAPK() {
-      // URL del APK en Firebase Hosting
-      const apkUrl = 'https://tidy-personal.web.app/tidy-app-latest.apk';
+      // URL del APK en GitHub Releases (versión 1.0.0)
+      const apkUrl = 'https://github.com/LUISLDCDV/Tidy_tesis_localhost/releases/download/1.0.0/tidy-app.apk';
 
-      // Crear elemento <a> temporal para forzar la descarga
-      const link = document.createElement('a');
-      link.href = apkUrl;
-      link.download = 'tidy-app.apk';
-      link.target = '_blank';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Abrir la URL directamente (GitHub ya maneja la descarga correctamente)
+      window.open(apkUrl, '_blank');
 
       // Notificar al usuario
       this.$q.notify({
@@ -280,7 +274,7 @@ export default {
 }
 
 .cta-section {
-  background: linear-gradient(135deg, #11631c 0%, #2b7be4 100%);
+  background: linear-gradient(135deg, #10741a 0%, #2d9e95 100%);
   color: white;
   min-height: 400px;
 }

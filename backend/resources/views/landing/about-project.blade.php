@@ -37,13 +37,13 @@
         .brand-icon {
             width: 50px;
             height: 50px;
-            background: linear-gradient(135deg,rgb(21, 102, 75) 0%,rgb(28, 52, 105) 100%);
+            background: linear-gradient(135deg,rgb(16, 116, 25) 0%,rgb(45, 158, 149) 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-right: 15px;
-            box-shadow: 0 4px 15px rgba(18, 38, 126, 0.4);
+            box-shadow: 0 4px 15px rgba(16, 116, 25, 0.4);
         }
         .brand-icon i {
             color: white;
@@ -55,7 +55,7 @@
             font-weight: 800;
             font-size: 42px;
             letter-spacing: -1px;
-            background: linear-gradient(135deg,rgb(21, 54, 104) 0%,rgb(21, 109, 65) 100%);
+            background: linear-gradient(135deg,rgb(16, 116, 25) 0%,rgb(45, 158, 149) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -101,7 +101,7 @@
         .feature-icon {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg,rgb(17, 70, 37) 0%,rgb(24, 59, 88) 100%);
+            background: linear-gradient(135deg,rgb(16, 116, 25) 0%,rgb(45, 158, 149) 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -167,7 +167,7 @@
                 Tidy es una aplicación web innovadora diseñada para revolucionar la forma en que organizamos nuestras tareas diarias y gestionamos nuestra productividad personal. Este proyecto representa la culminación de un trabajo de tesis enfocado en crear soluciones tecnológicas que mejoren la calidad de vida de las personas.
             </p>
 
-            <h2 class="subtitle">🎯 Misión del Proyecto</h2>
+            <h2 class="subtitle"><i class="fas fa-bullseye"></i> Misión del Proyecto</h2>
             <p class="text">
                 Desarrollar una plataforma integral que combine la simplicidad de uso con funcionalidades avanzadas, permitiendo a los usuarios organizar sus tareas, establecer objetivos y mantener un seguimiento efectivo de su progreso personal y profesional.
             </p>
@@ -185,8 +185,8 @@
                     <div class="feature-icon">
                         <i class="fas fa-bell"></i>
                     </div>
-                    <h3>Alarmas Inteligentes</h3>
-                    <p>Notificaciones personalizables con geolocalización para recordatorios contextuales.</p>
+                    <h3>Alarmas Personalizadas</h3>
+                    <p>Notificaciones personalizables para recordatorios que se adaptan a tus necesidades.</p>
                 </div>
                 <div class="feature">
                     <div class="feature-icon">
@@ -197,7 +197,7 @@
                 </div>
                 <div class="feature">
                     <div class="feature-icon">
-                        <i class="fas fa-target"></i>
+                        <i class="fas fa-bullseye"></i>
                     </div>
                     <h3>Objetivos</h3>
                     <p>Sistema de metas con seguimiento de progreso y logros para mantener la motivación.</p>
@@ -218,7 +218,7 @@
                 </div>
             </div>
 
-            <h2 class="subtitle">🚀 Tecnologías Utilizadas</h2>
+            <h2 class="subtitle"><i class="fas fa-rocket"></i> Tecnologías Utilizadas</h2>
             <p class="text">
                 El proyecto está construido utilizando tecnologías modernas y robustas:
             </p>

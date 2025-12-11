@@ -32,7 +32,7 @@
             <!-- Configuración actual -->
             <div class="card mb-4">
                 <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-primary">
+                    <h6 class="m-0 font-weight-bold text-white">
                         <i class="fas fa-cog"></i> Configuración Actual de Email
                     </h6>
                 </div>

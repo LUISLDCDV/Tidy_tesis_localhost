@@ -190,6 +190,7 @@
 
 <script>
 
+// TODO: MEJORAR FORMATO MAS PROLIJO
 // TODO: Modal para ver lo pagado y lo que falta por paga
 export default {
   name: 'GastosManager',

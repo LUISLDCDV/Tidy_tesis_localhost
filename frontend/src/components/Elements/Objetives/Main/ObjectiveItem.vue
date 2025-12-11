@@ -78,7 +78,7 @@ export default {
 
     //   console.log("metas.estado", metas1);
     //   const metas = Number(objective.metas.estado) || 0;
-    //   //TODO : Agregar los fueguitos(o estrellitas) y el otro las banderitas
+    //   //TODO : uno seria los fueguitos(o estrellitas) y el otro las banderitas
     //   const total = Number(objective.numero_de_metas) || 0;
       
     //   if (total === 0) return 0;

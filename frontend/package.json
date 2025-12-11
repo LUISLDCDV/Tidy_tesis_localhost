@@ -26,6 +26,7 @@
     "@capacitor/cli": "^6.2.1",
     "@capacitor/core": "^6.2.1",
     "@capacitor/local-notifications": "^6.1.0",
+    "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4",
     "@quasar/extras": "^1.17.0",
     "@tiptap/extension-code-block-lowlight": "^3.3.0",
     "@tiptap/extension-text-align": "^3.3.0",

@@ -4,7 +4,7 @@
       <div class="brand">
         <q-img
           :src="currentLogo"
-          style="width: 120px; height: auto; max-height: 40px; cursor: pointer;"
+          style="width: 120px; height: auto; max-height: 40px; cursor: pointer; border-radius: 12px;"
           @click="navigateToLogin"
           class="brand-logo"
           fit="contain"
@@ -68,14 +68,6 @@
           <q-tooltip :delay="300">{{ $t('auth.login') }}</q-tooltip>
         </q-btn>
         <q-btn
-          flat
-          :to="{ path: '/help' }"
-          icon="help_center"
-          class="nav-btn"
-        >
-          <q-tooltip :delay="300">{{ $t('nav.helpNav') }}</q-tooltip>
-        </q-btn>
-        <q-btn
           unelevated
           :to="{ path: '/Register' }"
           icon="person_add"
@@ -136,11 +128,6 @@
         <div class="drawer-item" @click="navigateAndClose('/login')">
           <q-icon name="login" />
           <span>{{ $t('auth.login') }}</span>
-        </div>
-
-        <div class="drawer-item" @click="navigateAndClose('/help')">
-          <q-icon name="help_center" />
-          <span>{{ $t('nav.helpNav') }}</span>
         </div>
 
         <div class="drawer-item" @click="navigateAndClose('/Register')">

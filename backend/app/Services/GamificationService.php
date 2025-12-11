@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\UserLevel;
 use App\Models\UserAchievement;
 use App\Models\Achievement;
+use App\Models\UsuarioCuenta;
+use App\Models\Notificacion;
 use Illuminate\Support\Facades\Log;
 
 class GamificationService
@@ -15,7 +17,7 @@ class GamificationService
     {
         $this->firebaseService = null; // Disable Firebase for now
         
-        // TODO: Reactivar Firebase para notificacion proximamente
+        // TODO: Reactivar cuando Firebase esté configurado
         // try {
         //     if (class_exists('\Kreait\Firebase\Factory')) {
         //         $this->firebaseService = app(FirebaseService::class);
@@ -64,10 +66,56 @@ class GamificationService
     public function giveExperience($userId, $amount, $reason = 'manual')
     {
         try {
+            // Intentar usar UsuarioCuenta primero (para compatibilidad con tests)
+            $cuenta = UsuarioCuenta::where('user_id', $userId)->first();
+
+            if ($cuenta) {
+                // Actualizar XP en UsuarioCuenta
+                $oldXP = $cuenta->total_xp ?? 0;
+                $newXP = $oldXP + $amount;
+                $oldLevel = $cuenta->current_level ?? 1;
+
+                // Calcular nuevo nivel
+                $newLevel = $this->calculateLevelFromXP($newXP);
+                $leveledUp = $newLevel > $oldLevel;
+
+                $cuenta->total_xp = $newXP;
+                $cuenta->current_level = $newLevel;
+                $cuenta->save();
+
+                $result = [
+                    'experience_gained' => $amount,
+                    'total_experience' => $newXP,
+                    'leveled_up' => $leveledUp,
+                    'old_level' => $oldLevel,
+                    'new_level' => $newLevel
+                ];
+
+                Log::info('Experience awarded to UsuarioCuenta', [
+                    'user_id' => $userId,
+                    'amount' => $amount,
+                    'reason' => $reason,
+                    'leveled_up' => $leveledUp,
+                    'new_level' => $newLevel
+                ]);
+
+                // Enviar notificación si subió de nivel
+                if ($leveledUp) {
+                    $this->sendLevelUpNotification($userId, $newLevel);
+                    $this->createLevelUpNotification($cuenta->id, $newLevel);
+
+                    // Verificar logros de nivel
+                    $this->checkLevelAchievements($userId, $newLevel);
+                }
+
+                return $result;
+            }
+
+            // Fallback a UserLevel si no hay UsuarioCuenta
             $userLevel = UserLevel::getOrCreateUserLevel($userId);
             $result = $userLevel->addExperience($amount);
 
-            Log::info('Experience awarded', [
+            Log::info('Experience awarded to UserLevel', [
                 'user_id' => $userId,
                 'amount' => $amount,
                 'reason' => $reason,
@@ -78,7 +126,7 @@ class GamificationService
             // Enviar notificación si subió de nivel
             if ($result['leveled_up']) {
                 $this->sendLevelUpNotification($userId, $result['new_level']);
-                
+
                 // Verificar logros de nivel
                 $this->checkLevelAchievements($userId, $result['new_level']);
             }
@@ -88,6 +136,55 @@ class GamificationService
         } catch (\Exception $e) {
             Log::error('Failed to give experience: ' . $e->getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Calcular nivel desde XP total
+     */
+    private function calculateLevelFromXP($totalXP)
+    {
+        // Fórmula: nivel 1 = 0 XP, nivel 2 = 100 XP, nivel 3 = 250 XP, etc.
+        // XP = (nivel - 1) * 100 + ((nivel - 1) * (nivel - 2) / 2) * 50
+        // Resolver para el nivel usando un bucle simple
+        $level = 1;
+        while ($this->xpForLevel($level + 1) <= $totalXP) {
+            $level++;
+        }
+        return $level;
+    }
+
+    /**
+     * Calcular XP requerido para un nivel
+     */
+    private function xpForLevel($level)
+    {
+        if ($level <= 1) return 0;
+        return ($level - 1) * 100 + (($level - 1) * ($level - 2) / 2) * 50;
+    }
+
+    /**
+     * Crear notificación de subida de nivel
+     */
+    private function createLevelUpNotification($cuentaId, $newLevel)
+    {
+        try {
+            // Obtener el usuario_id desde la cuenta
+            $cuenta = UsuarioCuenta::find($cuentaId);
+            if (!$cuenta) {
+                Log::error('Cuenta no encontrada para crear notificación: ' . $cuentaId);
+                return;
+            }
+
+            Notificacion::create([
+                'usuario_id' => $cuenta->user_id,
+                'cuenta_id' => $cuentaId,
+                'tipo' => 'nivel_up',
+                'descripcion' => "¡Felicidades! Has alcanzado el nivel {$newLevel}",
+                'leido' => false,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to create level up notification: ' . $e->getMessage());
         }
     }
 

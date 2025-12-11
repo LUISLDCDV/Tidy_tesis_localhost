@@ -27,6 +27,7 @@ cd Tidy_tesis_localhost
 ### 2. Configurar variables de entorno
 
 #### Backend (.env)
+
 ```bash
 cp backend/.env.example backend/.env
 ```
@@ -34,6 +35,7 @@ cp backend/.env.example backend/.env
 Edita `backend/.env` si necesitas cambiar configuraciones (ya viene con valores por defecto para Docker).
 
 #### Frontend (.env)
+
 ```bash
 cp frontend/.env.example frontend/.env
 ```
@@ -47,6 +49,7 @@ docker-compose up -d
 ```
 
 Este comando levantará:
+
 - **MySQL**: Puerto 3306
 - **Backend (Laravel)**: Puerto 8000
 - **Frontend (Quasar)**: Puerto 9000
@@ -79,6 +82,7 @@ tidy_phpmyadmin     phpmyadmin/phpmyadmin  Up 2 minutes    0.0.0.0:8080->80/tcp
 ## 📦 Servicios Disponibles
 
 ### MySQL
+
 - Host: `localhost`
 - Puerto: `3306`
 - Base de datos: `tidy_db`
@@ -87,32 +91,38 @@ tidy_phpmyadmin     phpmyadmin/phpmyadmin  Up 2 minutes    0.0.0.0:8080->80/tcp
 - Usuario root: `root` / `root`
 
 ### Backend Laravel
+
 - URL: `http://localhost:8000`
 - API: `http://localhost:8000/api`
 - Las migraciones y seeders se ejecutan automáticamente al iniciar
 
 ### Frontend Quasar
+
 - URL: `http://localhost:9000`
 - Hot reload habilitado (los cambios se reflejan automáticamente)
 
 ## 🔧 Comandos Útiles
 
 ### Detener los servicios
+
 ```bash
 docker-compose down
 ```
 
 ### Detener y eliminar volúmenes (⚠️ elimina la BD)
+
 ```bash
 docker-compose down -v
 ```
 
 ### Ver logs de todos los servicios
+
 ```bash
 docker-compose logs -f
 ```
 
 ### Ver logs de un servicio específico
+
 ```bash
 docker-compose logs -f backend
 docker-compose logs -f frontend
@@ -120,6 +130,7 @@ docker-compose logs -f mysql
 ```
 
 ### Ejecutar comandos en el backend
+
 ```bash
 # Entrar al contenedor
 docker-compose exec backend bash
@@ -132,9 +143,18 @@ docker-compose exec backend php artisan db:seed
 
 # Limpiar cache
 docker-compose exec backend php artisan cache:clear
+
+# Comando completo despues de deploy
+docker compose exec backend php artisan migrate:fresh --seed
+
+# Comando para realizar pruebas
+docker compose exec backend php artisan test
+
+
 ```
 
 ### Ejecutar comandos en el frontend
+
 ```bash
 # Entrar al contenedor
 docker-compose exec frontend sh
@@ -147,12 +167,14 @@ docker-compose exec frontend npm run build
 ```
 
 ### Reiniciar un servicio específico
+
 ```bash
 docker-compose restart backend
 docker-compose restart frontend
 ```
 
 ### Reconstruir imágenes (después de cambios en Dockerfile)
+
 ```bash
 docker-compose build
 docker-compose up -d
@@ -161,17 +183,20 @@ docker-compose up -d
 ## 🗄️ Gestión de Base de Datos
 
 ### Acceder a MySQL desde línea de comandos
+
 ```bash
 docker-compose exec mysql mysql -u tidy_user -p tidy_db
 # Contraseña: tidy_password
 ```
 
 ### Backup de la base de datos
+
 ```bash
 docker-compose exec mysql mysqldump -u root -proot tidy_db > backup.sql
 ```
 
 ### Restaurar base de datos
+
 ```bash
 docker-compose exec -T mysql mysql -u root -proot tidy_db < backup.sql
 ```
@@ -179,6 +204,7 @@ docker-compose exec -T mysql mysql -u root -proot tidy_db < backup.sql
 ## 🐛 Troubleshooting
 
 ### El backend no inicia
+
 ```bash
 # Ver logs
 docker-compose logs backend
@@ -193,6 +219,7 @@ docker-compose exec backend php artisan key:generate
 ```
 
 ### El frontend no inicia
+
 ```bash
 # Ver logs
 docker-compose logs frontend
@@ -205,6 +232,7 @@ docker-compose restart frontend
 ```
 
 ### MySQL no acepta conexiones
+
 ```bash
 # Verificar estado
 docker-compose logs mysql
@@ -218,6 +246,7 @@ docker-compose up -d
 ```
 
 ### Puerto ya en uso
+
 Si algún puerto (3306, 8000, 9000, 8080) ya está en uso:
 
 1. Edita `docker-compose.yml`
@@ -249,12 +278,14 @@ Tidy_tesis_localhost/
 ## 🔐 Credenciales de Desarrollo
 
 ### Aplicación
+
 - **Usuario demo**: `demo@demo.com`
 - **Contraseña**: `demo123`
 
 (Estas credenciales se crean automáticamente con los seeders)
 
 ### Base de Datos
+
 - **Usuario**: `tidy_user`
 - **Contraseña**: `tidy_password`
 - **Root**: `root` / `root`
@@ -281,11 +312,13 @@ Los cambios se reflejan automáticamente gracias a los volúmenes montados:
 ### Agregar dependencias
 
 #### Frontend
+
 ```bash
 docker-compose exec frontend npm install <paquete>
 ```
 
 #### Backend
+
 ```bash
 docker-compose exec backend composer require <paquete>
 ```

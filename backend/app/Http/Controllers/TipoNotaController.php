@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\TipoNota;
+use App\Models\UsuarioCuenta;
 
 class TipoNotaController extends Controller
 {
@@ -19,7 +20,10 @@ class TipoNotaController extends Controller
     {
         try {
             $user = auth()->user();
-            $isPremium = $user && $user->is_premium;
+
+            // Check UsuarioCuenta for premium status
+            $cuenta = UsuarioCuenta::where('user_id', $user->id)->first();
+            $isPremium = $cuenta && $cuenta->is_premium;
 
             // Intentar obtener de la base de datos
             $query = TipoNota::orderBy('id');
@@ -45,7 +49,8 @@ class TipoNotaController extends Controller
         } catch (\Exception $e) {
             // Si hay error con la BD, devolver tipos por defecto
             $user = auth()->user();
-            $isPremium = $user && $user->is_premium;
+            $cuenta = UsuarioCuenta::where('user_id', $user->id)->first();
+            $isPremium = $cuenta && $cuenta->is_premium;
 
             return response()->json([
                 'success' => true,
@@ -141,5 +146,13 @@ class TipoNotaController extends Controller
         }
 
         return $tipos;
+    }
+
+    /**
+     * Obtener tipos de notas disponibles (alias para tests)
+     */
+    public function available()
+    {
+        return $this->index();
     }
 }

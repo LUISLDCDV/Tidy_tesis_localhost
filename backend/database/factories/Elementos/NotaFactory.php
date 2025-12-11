@@ -12,13 +12,17 @@ class NotaFactory extends Factory
     public function definition()
     {
         return [
-            'elemento_id' => 1, // O usa un factory para Elemento
+            'elemento_id' => \App\Models\Elementos\Elemento::factory(),
             'fecha' => $this->faker->date(),
             'nombre' => $this->faker->sentence(3),
             'tipo_nota_id' => 1,
             'informacion' => $this->faker->paragraph(),
-            'contenido' => $this->faker->text(),
-            'clave' => $this->faker->word(),
+            'contenido' => [
+                'text' => $this->faker->paragraph(),
+                'tags' => $this->faker->words(3),
+                'formatting' => []
+            ],
+            'clave' => $this->faker->optional()->word(),
         ];
     }
 }
