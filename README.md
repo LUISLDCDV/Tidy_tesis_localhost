@@ -45,7 +45,10 @@ El frontend ya está configurado para apuntar al backend en `http://localhost:80
 ### 3. Levantar los servicios con Docker Compose
 
 ```bash
+docker-compose build
 docker-compose up -d
+docker compose exec backend php artisan migrate:fresh --seed
+
 ```
 
 Este comando levantará:
